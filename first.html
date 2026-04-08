@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RiskFlow Pro — Intelligent Risk Assessment Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fira+Code:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* ─── DARK THEME ─── */
+[data-theme="dark"]{
+  --bg:#0a0704;--s1:#110d08;--s2:#181009;--s3:#1e1510;--s4:#251b12;
+  --bd:rgba(255,180,80,0.07);--bd2:rgba(255,180,80,0.13);--bd3:rgba(255,180,80,0.2);
+  --t1:#f5ede0;--t2:#9e8870;--t3:#5a4a38;
+  --logo-fill:#ff7a20;--logo-glow:rgba(255,122,32,0.35);
+  --card-bg:rgba(255,255,255,0.015);
+  --shadow:0 8px 32px rgba(0,0,0,0.6);
+  --input-bg:#181009;
+}
+/* ─── LIGHT THEME ─── */
+[data-theme="light"]{
+  --bg:#fdf6ee;--s1:#fff8f0;--s2:#fef0e0;--s3:#fde8cc;--s4:#fddcb8;
+  --bd:rgba(180,100,20,0.12);--bd2:rgba(180,100,20,0.22);--bd3:rgba(180,100,20,0.35);
+  --t1:#1a0e04;--t2:#6b4a28;--t3:#9e7a50;
+  --logo-fill:#e06010;--logo-glow:rgba(220,80,0,0.2);
+  --card-bg:rgba(255,255,255,0.7);
+  --shadow:0 4px 20px rgba(180,80,0,0.1);
+  --input-bg:#fff8f0;
+}
+
+/* ─── SHARED TOKENS ─── */
+:root{
+  --orange:#ff7a20;--os:rgba(255,122,32,0.12);--ob:rgba(255,122,32,0.22);
+  --amber:#f59e0b;--as2:rgba(245,158,11,0.12);
+  --teal:#00c896;--ts:rgba(0,200,150,0.12);
+  --red:#f03030;--rs:rgba(240,48,48,0.1);
+  --blue:#3d7fff;--bs:rgba(61,127,255,0.10);
+  --purple:#9b6ef3;--ps:rgba(155,110,243,0.10);
+  --green:#22c55e;--gs:rgba(34,197,94,0.10);
+  --cyan:#06b6d4;--cs:rgba(6,182,212,0.10);
+  --vra-color:#06b6d4;--vra-bg:rgba(6,182,212,0.10);
+  --pra-color:#9b6ef3;--pra-bg:rgba(155,110,243,0.10);
+  --warn-color:#f59e0b;--warn-bg:rgba(245,158,11,0.12);
+  --r:6px;--rl:12px;
+  --fh:'Fraunces',serif;--fb:'DM Sans',sans-serif;--fm:'Fira Code',monospace;
+  transition:background .25s,color .25s;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--fb)}
+body{background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;transition:background .25s,color .25s}
+.hidden{display:none!important}
+input,select,button,textarea{font-family:var(--fb)}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:99px}
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle{
+  display:flex;align-items:center;gap:6px;
+  background:var(--s2);border:1px solid var(--bd2);border-radius:99px;
+  padding:4px 8px;cursor:pointer;transition:all .2s;
+  font-size:11px;font-weight:500;color:var(--t2);
+}
+.theme-toggle:hover{border-color:var(--orange);color:var(--orange)}
+.toggle-track{
+  width:32px;height:17px;background:var(--bd2);border-radius:99px;
+  position:relative;transition:background .2s;cursor:pointer;flex-shrink:0;
+}
+[data-theme="light"] .toggle-track{background:var(--orange)}
+.toggle-thumb{
+  position:absolute;top:2px;left:2px;width:13px;height:13px;
+  background:var(--t1);border-radius:50%;transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .toggle-thumb{transform:translateX(15px)}
+
+/* ─── BADGE ─── */
+.tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--fm);font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;white-space:nowrap;letter-spacing:.01em}
+.tag::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.tag.orange{background:var(--os);color:var(--orange);border:1px solid rgba(255,122,32,.25)}
+.tag.blue{background:var(--bs);color:#6ba3ff;border:1px solid rgba(61,127,255,.2)}
+.tag.teal{background:var(--ts);color:var(--teal);border:1px solid rgba(0,200,150,.2)}
+.tag.amber{background:var(--as2);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.tag.red{background:var(--rs);color:var(--red);border:1px solid rgba(240,48,48,.25)}
+.tag.purple{background:var(--ps);color:var(--purple);border:1px solid rgba(155,110,243,.25)}
+.tag.gray{background:var(--bd);color:var(--t3);border:1px solid var(--bd2)}
+.tag.green{background:var(--gs);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.tag.cyan{background:var(--cs);color:var(--cyan);border:1px solid rgba(6,182,212,.2)}
+.tag.warning{background:rgba(255,170,0,0.15);color:#ff9900;border:1px solid rgba(255,170,0,.35);font-weight:600}
+
+/* VRA/PRA pills */
+.vra-tag,.assessment-type-pill.atp-vra{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:9.5px;font-weight:500;padding:3px 8px;border-radius:5px;background:var(--vra-bg);color:var(--vra-color);border:1px solid rgba(6,182,212,.25)}
+.pra-tag,.assessment-type-pill.atp-pra{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:9.5px;font-weight:500;padding:3px 8px;border-radius:5px;background:var(--pra-bg);color:var(--pra-color);border:1px solid rgba(155,110,243,.25)}
+.assessment-type-pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:9.5px;font-weight:500;padding:3px 8px;border-radius:5px}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;font-family:var(--fb)}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 2px 12px rgba(255,122,32,.3)}.btn-primary:hover{background:#e86a10;transform:translateY(-1px);box-shadow:0 4px 20px rgba(255,122,32,.4)}
+.btn-ghost{background:var(--s2);color:var(--t2);border:1px solid var(--bd2)}.btn-ghost:hover{color:var(--t1);background:var(--s3);border-color:var(--bd3)}
+.btn-teal{background:var(--teal);color:#001a13;font-weight:600}.btn-teal:hover{background:#00a87e;transform:translateY(-1px)}
+.btn-red{background:var(--rs);color:var(--red);border:1px solid rgba(240,48,48,.25)}.btn-red:hover{background:rgba(240,48,48,.2)}
+.btn-sm{padding:4px 10px;font-size:11.5px;border-radius:6px}
+.btn-xs{padding:3px 8px;font-size:10.5px;border-radius:5px}
+.btn-purple{background:var(--ps);color:var(--purple);border:1px solid rgba(155,110,243,.25)}.btn-purple:hover{background:rgba(155,110,243,.2)}
+.btn-warn{background:var(--warn-bg);color:var(--warn-color);border:1px solid rgba(245,158,11,.3);font-weight:600}.btn-warn:hover{background:rgba(245,158,11,.2)}
+
+/* ─── CARDS ─── */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);box-shadow:var(--shadow)}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--fh);font-size:14px;font-weight:600;letter-spacing:-.2px}
+.card-body{padding:16px 18px}
+
+/* ─── STAT CARD ─── */
+.stat-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;box-shadow:var(--shadow)}
+.stat-card:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.stat-glow{position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.08;transition:opacity .2s}
+.stat-card:hover .stat-glow{opacity:.15}
+.stat-label{font-size:10px;color:var(--t3);font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.stat-value{font-family:var(--fh);font-size:32px;font-weight:700;letter-spacing:-1.5px;line-height:1}
+.stat-sub{font-size:11px;color:var(--t3);margin-top:5px}
+.stat-card.orange .stat-value{color:var(--orange)}.stat-card.orange .stat-glow{background:var(--orange)}
+.stat-card.teal .stat-value{color:var(--teal)}.stat-card.teal .stat-glow{background:var(--teal)}
+.stat-card.amber .stat-value{color:var(--amber)}.stat-card.amber .stat-glow{background:var(--amber)}
+.stat-card.red .stat-value{color:var(--red)}.stat-card.red .stat-glow{background:var(--red)}
+.stat-card.purple .stat-value{color:var(--purple)}.stat-card.purple .stat-glow{background:var(--purple)}
+.stat-card.cyan .stat-value{color:var(--cyan)}.stat-card.cyan .stat-glow{background:var(--cyan)}
+.stat-card.blue .stat-value{color:#6ba3ff}.stat-card.blue .stat-glow{background:var(--blue)}
+.stat-card.green .stat-value{color:var(--green)}.stat-card.green .stat-glow{background:var(--green)}
+
+/* ─── HISTORY FLAG BANNER ─── */
+.history-banner{
+  background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(255,122,32,0.08));
+  border:1px solid rgba(245,158,11,0.35);
+  border-left:3px solid var(--amber);
+  border-radius:10px;padding:12px 16px;margin-bottom:8px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.history-banner-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.history-banner-text{flex:1}
+.history-banner-title{font-weight:600;font-size:12.5px;color:var(--amber);margin-bottom:3px}
+.history-banner-detail{font-size:11.5px;color:var(--t2);line-height:1.5}
+
+/* ─── DUPLICATE FLAG ─── */
+.dup-banner{
+  background:rgba(240,48,48,0.07);
+  border:1px solid rgba(240,48,48,0.3);
+  border-left:3px solid var(--red);
+  border-radius:10px;padding:12px 16px;margin-bottom:8px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.dup-banner-icon{font-size:18px;flex-shrink:0}
+.dup-banner-title{font-weight:600;font-size:12.5px;color:var(--red);margin-bottom:3px}
+.dup-banner-detail{font-size:11.5px;color:var(--t2);line-height:1.5}
+
+/* ─── TOAST ─── */
+.toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--s2);border:1px solid var(--bd2);border-radius:10px;padding:11px 16px;font-size:12.5px;display:flex;align-items:center;gap:9px;min-width:240px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:tIn .2s ease;pointer-events:all}
+@keyframes tIn{from{transform:translateX(20px);opacity:0}}
+.toast.ok{border-left:3px solid var(--teal)}.toast.err{border-left:3px solid var(--red)}.toast.info{border-left:3px solid var(--orange)}.toast.warn{border-left:3px solid var(--amber)}
+
+/* ─── MODAL ─── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.modal.on{display:flex}
+.modal-box{background:var(--s1);border:1px solid var(--bd2);border-radius:16px;padding:26px;width:600px;max-width:95vw;max-height:85vh;overflow-y:auto;animation:mIn .2s ease;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+@keyframes mIn{from{transform:scale(.96);opacity:0}}
+.modal-title{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;transition:color .13s;line-height:1}
+.modal-close:hover{color:var(--t1)}
+
+/* ─── FORM ─── */
+.form-row{display:flex;gap:12px;margin-bottom:12px}
+.form-group{flex:1}
+.form-label{display:block;font-size:11px;color:var(--t2);font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.form-input{width:100%;background:var(--input-bg);border:1px solid var(--bd2);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t1);transition:border-color .13s}
+.form-input:focus{outline:none;border-color:var(--orange)}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239e8870' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;background-color:var(--input-bg)}
+
+/* ════════════════════════════════════════
+   LOGIN SCREEN
+════════════════════════════════════════ */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 20%,rgba(255,122,32,.07) 0%,transparent 60%)}
+.login-grid{position:absolute;inset:0;opacity:.04;background-image:linear-gradient(var(--bd2) 1px,transparent 1px),linear-gradient(90deg,var(--bd2) 1px,transparent 1px);background-size:44px 44px}
+.login-wrap{width:100%;max-width:440px;padding:20px;position:relative;z-index:1}
+.login-brand{text-align:center;margin-bottom:38px}
+.login-logo-mark{width:58px;height:58px;background:linear-gradient(135deg,#ff7a20,#ffb060);border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;box-shadow:0 8px 32px rgba(255,122,32,.35)}
+.login-name{font-family:var(--fh);font-size:28px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--t1) 40%,#ff9040);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-tagline{font-size:12px;color:var(--t3);font-family:var(--fm);margin-top:4px;letter-spacing:.04em}
+.login-card{background:var(--s1);border:1px solid var(--bd2);border-radius:20px;padding:32px;box-shadow:0 32px 64px rgba(0,0,0,.35)}
+.login-card-title{font-family:var(--fh);font-size:20px;font-weight:700;margin-bottom:4px}
+.login-card-sub{font-size:13px;color:var(--t2);margin-bottom:24px}
+.login-tabs{display:flex;background:var(--s2);border-radius:10px;padding:3px;margin-bottom:22px;gap:3px}
+.ltab{flex:1;padding:8px;text-align:center;font-size:12.5px;font-weight:500;cursor:pointer;border-radius:8px;transition:all .15s;color:var(--t2)}
+.ltab.on{background:var(--orange);color:#fff;box-shadow:0 2px 8px rgba(255,122,32,.35)}
+.lfield{margin-bottom:16px}
+.lfield label{display:block;font-size:11px;color:var(--t2);font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.lfield input,.lfield select{width:100%;background:var(--input-bg);border:1px solid var(--bd2);border-radius:9px;padding:10px 13px;font-size:13px;color:var(--t1);transition:border-color .13s;appearance:none}
+.lfield input:focus,.lfield select:focus{outline:none;border-color:var(--orange)}
+.login-submit{width:100%;padding:12px;background:linear-gradient(135deg,#ff7a20,#ff9a40);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fh);transition:all .15s;letter-spacing:.01em;margin-top:6px;box-shadow:0 4px 16px rgba(255,122,32,.3)}
+.login-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,122,32,.45)}
+.login-hint{font-size:11px;color:var(--t3);text-align:center;margin-top:16px;font-family:var(--fm)}
+.login-hint b{color:var(--t2);font-weight:500}
+.login-theme-row{display:flex;justify-content:center;margin-top:14px}
+
+/* ADMIN LAYOUT */
+#admin-screen{display:none;height:100vh;flex-direction:row;overflow:hidden}
+#admin-screen.on{display:flex}
+
+.sidebar{width:224px;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;height:100vh;flex-shrink:0}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--bd)}
+.sb-logo-inner{display:flex;align-items:center;gap:10px}
+.sb-icon{width:34px;height:34px;background:linear-gradient(135deg,#ff7a20,#ff9a40);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(255,122,32,.3);flex-shrink:0}
+.sb-name{font-family:var(--fh);font-size:16px;font-weight:700;letter-spacing:-.3px}
+.sb-version{font-family:var(--fm);font-size:9px;color:var(--t3);margin-top:1px;letter-spacing:.05em}
+.sb-nav{padding:10px 8px;flex:1;overflow-y:auto}
+.sb-section{font-family:var(--fm);font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;padding:12px 10px 5px;user-select:none}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;font-size:12.5px;color:var(--t2);cursor:pointer;transition:all .13s;border-radius:8px;margin-bottom:1px}
+.nav-item:hover{color:var(--t1);background:var(--os)}
+.nav-item.on{color:var(--orange);background:var(--os);position:relative;font-weight:500}
+.nav-item.on::before{content:'';position:absolute;left:-8px;top:50%;transform:translateY(-50%);height:60%;width:2px;background:var(--orange);border-radius:0 2px 2px 0}
+.nav-icon{font-size:13px;width:16px;text-align:center;flex-shrink:0;opacity:.8}
+.sb-footer{padding:14px 16px;border-top:1px solid var(--bd)}
+.sb-user{display:flex;align-items:center;gap:9px}
+.sb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:52px;background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.topbar-title{font-family:var(--fh);font-size:16px;font-weight:700;letter-spacing:-.2px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.content-area{flex:1;overflow-y:auto;padding:24px}
+.page{display:none}.page.on{display:block}
+
+.stat-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.stat-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-family:var(--fh);font-size:17px;font-weight:700;letter-spacing:-.3px}
+.section-sub{font-size:12px;color:var(--t2);margin-top:2px}
+
+/* ─── KANBAN ─── */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;margin-top:8px}
+.kb-col{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);min-height:160px;overflow:hidden}
+.kb-col-header{padding:10px 13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.kb-col-title{font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.kb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.kb-count{font-family:var(--fm);font-size:9.5px;background:var(--os);color:var(--orange);padding:2px 7px;border-radius:99px}
+.kb-cards{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:80px}
+.kb-card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.kb-card:hover{border-color:var(--bd2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.kb-card-stripe{position:absolute;left:0;top:0;bottom:0;width:3px}
+.kb-card-client{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.kb-card-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.kb-card-amount{font-family:var(--fm);font-size:10.5px;color:var(--orange)}
+.kb-card-type{font-size:9.5px;color:var(--t3)}
+.kb-card-eng{font-size:10px;color:var(--t2);margin-top:5px;display:flex;align-items:center;gap:4px}
+.kb-empty{text-align:center;padding:28px 12px;color:var(--t3);font-size:11px}
+.kb-card-history-flag{display:inline-flex;align-items:center;gap:3px;font-size:9px;color:var(--amber);background:rgba(245,158,11,.1);border-radius:4px;padding:1px 5px;margin-top:3px}
+.kb-card-dup-flag{display:inline-flex;align-items:center;gap:3px;font-size:9px;color:var(--red);background:rgba(240,48,48,.1);border-radius:4px;padding:1px 5px;margin-top:3px}
+
+/* ─── TABLE ─── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{text-align:left;padding:9px 13px;font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--bd);white-space:nowrap;font-family:var(--fm);background:var(--s2)}
+tbody tr{border-bottom:1px solid var(--bd);transition:background .1s}
+tbody tr:hover{background:var(--os)}
+tbody tr:last-child{border-bottom:none}
+tbody tr.row-dup{background:rgba(240,48,48,.04)}
+tbody tr.row-hist{background:rgba(245,158,11,.04)}
+td{padding:10px 13px;vertical-align:middle}
+.td-mono{font-family:var(--fm);font-size:11px;color:var(--t2)}
+.td-amt{font-family:var(--fm);font-size:12px;font-weight:500;color:var(--orange)}
+.td-name{font-weight:500;font-size:13px}
+
+/* ─── FILTER ROW ─── */
+.filter-row{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:4px 13px;border-radius:99px;font-size:11.5px;cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t2);transition:all .13s}
+.filter-chip:hover{color:var(--t1);border-color:var(--bd3)}
+.filter-chip.on{background:var(--os);border-color:rgba(255,122,32,.4);color:var(--orange)}
+.search-input{background:var(--s2);border:1px solid var(--bd2);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--t1);font-family:var(--fb);width:200px;margin-left:auto}
+.search-input:focus{outline:none;border-color:var(--orange)}
+
+/* ─── ENGINEER CARDS ─── */
+.eng-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.eng-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;transition:all .15s;box-shadow:var(--shadow)}
+.eng-card:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.eng-card.next-up{border-color:rgba(255,122,32,.45);box-shadow:0 0 0 1px rgba(255,122,32,.18),0 4px 20px rgba(255,122,32,.1)}
+.eng-card-head{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.eng-avatar{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.eng-name{font-size:13px;font-weight:600}
+.eng-id{font-family:var(--fm);font-size:9.5px;color:var(--t3);margin-top:2px}
+.eng-city-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:5px;background:var(--s2);color:var(--t2);border:1px solid var(--bd2);margin-top:4px}
+.eng-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.eng-stat-val{font-family:var(--fh);font-size:18px;font-weight:700;text-align:center;line-height:1.1}
+.eng-stat-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;text-align:center;margin-top:2px;letter-spacing:.04em}
+.eng-bar-wrap{height:3px;background:var(--bd);border-radius:99px;margin-bottom:10px;overflow:hidden}
+.eng-bar-fill{height:100%;border-radius:99px;transition:width .4s}
+.eng-footer{display:flex;align-items:center;justify-content:space-between}
+.eng-email{font-size:10px;color:var(--t3);font-family:var(--fm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ─── STATUS INDICATORS ─── */
+.work-status{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;padding:4px 10px;border-radius:99px;font-family:var(--fm)}
+.ws-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.work-status.working{background:var(--ts);color:var(--teal);border:1px solid rgba(0,200,150,.2)}.work-status.working .ws-dot{background:var(--teal);animation:blink 2s infinite}
+.work-status.lunch{background:var(--as2);color:var(--amber);border:1px solid rgba(245,158,11,.2)}.work-status.lunch .ws-dot{background:var(--amber)}
+.work-status.off{background:var(--bd);color:var(--t3);border:1px solid var(--bd2)}.work-status.off .ws-dot{background:var(--t3)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.rr-pill{display:inline-flex;align-items:center;gap:5px;background:var(--os);color:var(--orange);font-family:var(--fm);font-size:10px;padding:3px 9px;border-radius:99px;border:1px solid rgba(255,122,32,.25)}
+
+/* ─── CALENDAR ─── */
+.cal-strip{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px}
+.cal-day{flex-shrink:0;width:38px;border-radius:7px;padding:6px 4px;text-align:center;cursor:pointer;border:1px solid var(--bd);transition:all .15s;background:var(--s2)}
+.cal-day:hover{border-color:var(--bd2)}
+.cal-day.today{border-color:var(--orange);background:var(--os)}
+.cal-day.booked{background:var(--rs);border-color:rgba(240,48,48,.3)}
+.cal-day-name{font-size:8.5px;color:var(--t3);font-family:var(--fm);text-transform:uppercase;margin-bottom:2px}
+.cal-day-num{font-size:13px;font-weight:600;font-family:var(--fh)}
+.cal-day-dot{width:4px;height:4px;border-radius:50%;margin:3px auto 0;background:transparent}
+.cal-day.booked .cal-day-dot{background:var(--red)}
+.cal-day.avail .cal-day-dot{background:var(--teal)}
+
+/* ─── UPLOAD ─── */
+.upload-zone{border:2px dashed var(--bd2);border-radius:var(--rl);padding:48px 28px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:var(--s1)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:var(--os)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+/* ─── RULES ─── */
+.rule-item{background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+.rule-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.rule-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.rule-desc{font-size:11.5px;color:var(--t2);line-height:1.5}
+
+/* ─── AUDIT ─── */
+.audit-entry{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.audit-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--s2);flex-shrink:0}
+.audit-content{flex:1;min-width:0}
+.audit-title{font-size:12.5px;font-weight:500}
+.audit-detail{font-size:11px;color:var(--t2);margin-top:2px}
+.audit-time{font-family:var(--fm);font-size:10px;color:var(--t3);flex-shrink:0;padding-top:2px}
+
+/* ─── DETAIL MODAL ─── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.detail-cell{background:var(--s2);border-radius:8px;padding:11px 13px;border:1px solid var(--bd)}
+.detail-label{font-size:9.5px;color:var(--t3);font-family:var(--fm);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.detail-value{font-size:13px;font-weight:500}
+.divider{height:1px;background:var(--bd);margin:14px 0}
+.section-label{font-family:var(--fm);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:9px}
+.attempt-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.attempt-num{width:20px;height:20px;border-radius:99px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:9.5px;color:var(--t3);flex-shrink:0}
+.attempt-row:last-child{border-bottom:none}
+
+/* ─── HISTORY LOG PAGE ─── */
+.hist-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--warn-bg);color:var(--warn-color);border:1px solid rgba(245,158,11,.3)}
+.dup-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--rs);color:var(--red);border:1px solid rgba(240,48,48,.3)}
+
+/* ENGINEER PORTAL */
+#eng-screen{display:none;min-height:100vh;flex-direction:column}
+#eng-screen.on{display:flex}
+.ep-topbar{height:56px;background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0}
+.ep-logo{display:flex;align-items:center;gap:10px}
+.ep-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#ff7a20,#ff9a40);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ep-logo-name{font-family:var(--fh);font-size:15px;font-weight:700}
+.ep-topbar-right{display:flex;align-items:center;gap:12px}
+.ep-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.ep-username{font-size:13px;font-weight:500}
+.ep-city-label{font-size:10.5px;color:var(--t3);font-family:var(--fm)}
+
+.ep-content{flex:1;padding:32px 28px;max-width:980px;margin:0 auto;width:100%}
+.ep-greeting-block{margin-bottom:32px}
+.ep-greeting-h{font-family:var(--fh);font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.ep-greeting-sub{font-size:13.5px;color:var(--t2);line-height:1.5}
+
+.ep-tabs{display:flex;gap:0;background:var(--s2);border-radius:10px;padding:3px;margin-bottom:24px;width:fit-content;border:1px solid var(--bd)}
+.ep-tab{padding:7px 18px;font-size:12.5px;font-weight:500;cursor:pointer;border-radius:8px;color:var(--t2);transition:all .15s}
+.ep-tab.on{background:var(--s1);color:var(--t1);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+
+/* Task cards */
+.task-list{display:flex;flex-direction:column;gap:14px}
+.task-card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;overflow:hidden;transition:all .15s;box-shadow:var(--shadow)}
+.task-card:hover{border-color:var(--bd2)}
+.task-card.status-accepted{border-left:3px solid var(--teal)}
+.task-card.status-declined{border-left:3px solid var(--red);opacity:.65}
+.task-card.status-escalated{border-left:3px solid var(--amber);opacity:.65}
+.task-timer-bar{height:3px;background:var(--bd)}
+.task-timer-fill{height:100%;transition:width 1s linear}
+.task-body{padding:20px 22px;display:flex;align-items:flex-start;gap:18px}
+.task-type-icon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.task-type-icon.vra-type{background:var(--vra-bg)}
+.task-type-icon.pra-type{background:var(--pra-bg)}
+.task-info{flex:1;min-width:0}
+.task-client-name{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:3px;letter-spacing:-.2px}
+.task-policy{font-family:var(--fm);font-size:10.5px;color:var(--t3);margin-bottom:8px}
+.task-amount{font-family:var(--fh);font-size:24px;font-weight:700;color:var(--orange);margin-bottom:10px}
+.task-meta{display:flex;gap:18px;flex-wrap:wrap}
+.task-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}
+.task-meta-icon{font-size:14px}
+.task-type-badge{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.task-action-bar{padding:14px 22px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--s2)}
+.task-deadline{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--t3);font-family:var(--fm)}
+.task-deadline.urgent{color:var(--red)}
+.task-buttons{display:flex;gap:9px}
+.btn-accept{padding:10px 22px;background:var(--teal);color:#001a13;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fh);transition:all .15s;display:flex;align-items:center;gap:7px}
+.btn-accept:hover{background:#00a87e;transform:translateY(-1px)}
+.btn-decline{padding:10px 22px;background:var(--rs);color:var(--red);border:1px solid rgba(240,48,48,.3);border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fh);transition:all .15s;display:flex;align-items:center;gap:7px}
+.btn-decline:hover{background:rgba(240,48,48,.2)}
+.task-resolved-pill{padding:9px 16px;border-radius:9px;font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:7px}
+.task-resolved-pill.acc{background:var(--ts);color:var(--teal)}
+.task-resolved-pill.dec{background:var(--rs);color:var(--red)}
+.vra-note{background:var(--vra-bg);border:1px solid rgba(6,182,212,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--vra-color);margin-top:10px;display:flex;align-items:flex-start;gap:8px}
+.pra-note{background:var(--pra-bg);border:1px solid rgba(155,110,243,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--pra-color);margin-top:10px;display:flex;align-items:flex-start;gap:8px}
+
+/* ─── ADMIN ALERTS PANEL ─── */
+.alerts-panel{margin-bottom:20px}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:10px;margin-bottom:7px;font-size:12.5px}
+.alert-item.warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)}
+.alert-item.err{background:rgba(240,48,48,.07);border:1px solid rgba(240,48,48,.25)}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-content{flex:1}
+.alert-title{font-weight:600;margin-bottom:2px;color:var(--t1)}
+.alert-desc{color:var(--t2);font-size:11.5px;line-height:1.5}
+.alert-close{background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;padding:2px;margin-left:8px;flex-shrink:0}
+.alert-close:hover{color:var(--t1)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:72px 20px}
+.empty-icon{font-size:52px;margin-bottom:16px;opacity:.3}
+.empty-title{font-family:var(--fh);font-size:19px;font-weight:600;color:var(--t2);margin-bottom:8px}
+.empty-desc{font-size:13px;color:var(--t3);line-height:1.6;max-width:360px;margin:0 auto}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-grid"></div>
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="login-logo-mark">⚡</div>
+      <div class="login-name">RiskFlow Pro</div>
+      <div class="login-tagline">INTELLIGENT RISK ASSESSMENT PLATFORM</div>
+    </div>
+    <div class="login-card">
+      <div class="login-card-title">Welcome back</div>
+      <div class="login-card-sub">Sign in to access your portal</div>
+      <div class="login-tabs">
+        <div class="ltab on" onclick="switchLoginTab('admin',this)">Admin</div>
+        <div class="ltab" onclick="switchLoginTab('engineer',this)">Risk Engineer</div>
+      </div>
+      <div id="admin-fields">
+        <div class="lfield"><label>Email</label><input type="email" id="adm-email" value="admin@riskflow.in" placeholder="admin@riskflow.in"></div>
+        <div class="lfield"><label>Password</label><input type="password" id="adm-pass" value="admin123" placeholder="••••••••"></div>
+      </div>
+      <div id="eng-fields" class="hidden">
+        <div class="lfield"><label>Select Engineer</label><select id="eng-select" class="form-select"></select></div>
+        <div class="lfield"><label>Password</label><input type="password" id="eng-pass" value="eng123" placeholder="••••••••"></div>
+      </div>
+      <button class="login-submit" onclick="doLogin()">Sign In →</button>
+      <div class="login-hint">Demo: Admin <b>admin123</b> · Engineer <b>eng123</b></div>
+      <div class="login-theme-row" style="margin-top:14px">
+        <div class="theme-toggle" onclick="toggleTheme()">
+          <span id="theme-label-login">🌙 Dark</span>
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ADMIN ══════════════════════ -->
+<div id="admin-screen">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-inner">
+        <div class="sb-icon">⚡</div>
+        <div>
+          <div class="sb-name">RiskFlow</div>
+          <div class="sb-version">ADMIN PORTAL · v3.0</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Overview</div>
+      <div class="nav-item on" onclick="navGo('dashboard',this)"><span class="nav-icon">◈</span>Dashboard</div>
+      <div class="nav-item" onclick="navGo('upload',this)"><span class="nav-icon">⬆</span>Upload Excel</div>
+      <div class="sb-section">Assessments</div>
+      <div class="nav-item" onclick="navGo('assessments',this)"><span class="nav-icon">☰</span>All Assessments</div>
+      <div class="nav-item" onclick="navGo('vra',this)"><span class="nav-icon">🖥</span>VRA Queue</div>
+      <div class="nav-item" onclick="navGo('pra',this)"><span class="nav-icon">🏭</span>PRA Queue</div>
+      <div class="nav-item" onclick="navGo('allocation',this)"><span class="nav-icon">⇄</span>Allocation Log</div>
+      <div class="nav-item" onclick="navGo('historylog',this)"><span class="nav-icon">🕐</span>History Log <span id="hist-badge-count" class="tag warning" style="margin-left:auto;display:none">0</span></div>
+      <div class="sb-section">Team</div>
+      <div class="nav-item" onclick="navGo('engineers',this)"><span class="nav-icon">◉</span>Engineers</div>
+      <div class="sb-section">System</div>
+      <div class="nav-item" onclick="navGo('rules',this)"><span class="nav-icon">⚙</span>Rules & Config</div>
+      <div class="nav-item" onclick="navGo('audit',this)"><span class="nav-icon">≡</span>Audit Log</div>
+    </nav>
+    <div class="sb-footer">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="theme-toggle" onclick="toggleTheme()" style="width:100%;justify-content:space-between">
+          <span id="theme-label-admin">🌙 Dark mode</span>
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="sb-user">
+          <div class="sb-avatar" style="background:var(--os);color:var(--orange)">AD</div>
+          <div><div style="font-size:12.5px;font-weight:500">Admin</div><div style="font-size:10px;color:var(--t3)">Risk Manager</div></div>
+          <button class="btn btn-ghost btn-xs" style="margin-left:auto" onclick="logout()">Out</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-right">
+        <div id="alerts-indicator" class="hidden" style="display:none">
+          <button class="btn btn-warn btn-sm" onclick="navGo('historylog',document.querySelectorAll('.nav-item')[8])">
+            ⚠ <span id="alert-count">0</span> Alerts
+          </button>
+        </div>
+        <div class="rr-pill">↻ Round-robin active</div>
+        <div id="ws-indicator" class="work-status working"><div class="ws-dot"></div><span id="ws-label">Working hours</span></div>
+        <div id="clock-el" style="font-family:var(--fm);font-size:10.5px;color:var(--t3)"></div>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- ─── DASHBOARD ─── -->
+      <div class="page on" id="p-dashboard">
+        <!-- Admin alerts -->
+        <div class="alerts-panel" id="dashboard-alerts"></div>
+        <div class="stat-grid-4" id="dash-stats">
+          <div class="stat-card orange" onclick="quickFilter('all')"><div class="stat-glow"></div><div class="stat-label">Total Allocated</div><div class="stat-value" id="st-total">0</div><div class="stat-sub">Eligible this session</div></div>
+          <div class="stat-card cyan" onclick="quickFilter('vra')"><div class="stat-glow"></div><div class="stat-label">VRA Assessments</div><div class="stat-value" id="st-vra">0</div><div class="stat-sub">5–100 Cr · Virtual</div></div>
+          <div class="stat-card purple" onclick="quickFilter('pra')"><div class="stat-glow"></div><div class="stat-label">PRA Assessments</div><div class="stat-value" id="st-pra">0</div><div class="stat-sub">&gt;100 Cr · Physical</div></div>
+          <div class="stat-card amber" onclick="quickFilter('assigned')"><div class="stat-glow"></div><div class="stat-label">Awaiting Response</div><div class="stat-value" id="st-pending">0</div><div class="stat-sub">8hr deadline active</div></div>
+        </div>
+        <div class="stat-grid-4" style="margin-bottom:24px">
+          <div class="stat-card teal" onclick="quickFilter('accepted')"><div class="stat-glow"></div><div class="stat-label">Accepted</div><div class="stat-value" id="st-accepted">0</div><div class="stat-sub">Confirmed</div></div>
+          <div class="stat-card red" onclick="quickFilter('escalated')"><div class="stat-glow"></div><div class="stat-label">Escalated</div><div class="stat-value" id="st-escalated">0</div><div class="stat-sub">Needs admin action</div></div>
+          <div class="stat-card blue" onclick="quickFilter('done')"><div class="stat-glow"></div><div class="stat-label">Inspection Done</div><div class="stat-value" id="st-done">0</div><div class="stat-sub">Completed</div></div>
+          <div class="stat-card amber" onclick="navGo('historylog',document.querySelectorAll('.nav-item')[8])"><div class="stat-glow"></div><div class="stat-label">History Alerts</div><div class="stat-value" id="st-alerts" style="color:var(--amber)">0</div><div class="stat-sub">Duplicate / recent flags</div></div>
+        </div>
+        <div class="kanban" id="kanban-board"></div>
+      </div>
+
+      <!-- ─── UPLOAD ─── -->
+      <div class="page" id="p-upload">
+        <div style="max-width:660px">
+          <div class="section-header">
+            <div><div class="section-title">Morning Excel Import</div><div class="section-sub">Upload today's risk assessment sheet</div></div>
+          </div>
+          <div class="upload-zone" id="upload-zone" ondragover="onDrag(event,'over')" ondragleave="onDrag(event,'leave')" ondrop="onDrop(event)">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="onFileSelect(event)">
+            <div style="font-size:44px;margin-bottom:12px;opacity:.5">📊</div>
+            <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:5px">Drop Excel file here</div>
+            <div style="font-size:12.5px;color:var(--t3)">or click to browse · .xlsx · .xls · .csv</div>
+          </div>
+          <div id="preview-section" style="display:none;margin-top:20px">
+            <div id="upload-flags-section"></div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title" id="preview-title">Preview</span>
+                <div style="display:flex;gap:7px">
+                  <span class="tag amber" id="prev-total">0 rows</span>
+                  <span class="tag cyan" id="prev-vra">0 VRA</span>
+                  <span class="tag purple" id="prev-pra">0 PRA</span>
+                  <span class="tag warning" id="prev-dup" style="display:none">0 Duplicates</span>
+                  <span class="tag amber" id="prev-hist" style="display:none">0 Recent Hist</span>
+                </div>
+              </div>
+              <div class="table-wrap"><table><thead id="prev-head"></thead><tbody id="prev-body"></tbody></table></div>
+              <div style="padding:13px 18px;border-top:1px solid var(--bd);display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="runAllocation()">⚡ Allocate All Eligible</button>
+                <button class="btn btn-ghost" onclick="clearUpload()">Clear</button>
+                <span style="font-size:11px;color:var(--t3)">VRA: 5–100Cr · PRA: &gt;100Cr · &lt;5Cr skipped · Duplicates blocked · 3yr history notified</span>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><span class="card-title">Expected Column Format</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Col</th><th>Header</th><th>Notes</th><th>Required</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td class="td-mono">Client Name</td><td style="font-size:11.5px;color:var(--t2)">Company or client name</td><td><span class="tag teal">Yes</span></td></tr>
+              <tr><td>B</td><td class="td-mono">Policy No</td><td style="font-size:11.5px;color:var(--t2)">Policy reference</td><td><span class="tag gray">Optional</span></td></tr>
+              <tr><td>C</td><td class="td-mono">Sum Insured</td><td style="font-size:11.5px;color:var(--t2)">In Crores (₹Cr)</td><td><span class="tag teal">Yes</span></td></tr>
+              <tr><td>D</td><td class="td-mono">Risk Type</td><td style="font-size:11.5px;color:var(--t2)">Occupancy/class</td><td><span class="tag gray">Optional</span></td></tr>
+              <tr><td>E</td><td class="td-mono">Location</td><td style="font-size:11.5px;color:var(--t2)">City for PRA matching</td><td><span class="tag amber">PRA Critical</span></td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ALL ASSESSMENTS ─── -->
+      <div class="page" id="p-assessments">
+        <div class="section-header">
+          <div><div class="section-title">All Assessments</div><div class="section-sub">Full list with VRA/PRA classification · History flags shown inline</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">↓ Export CSV</button>
+        </div>
+        <div class="filter-row">
+          <button class="filter-chip on" onclick="setFilter('all',this)">All</button>
+          <button class="filter-chip" onclick="setFilter('vra-only',this)">VRA</button>
+          <button class="filter-chip" onclick="setFilter('pra-only',this)">PRA</button>
+          <button class="filter-chip" onclick="setFilter('assigned',this)">Pending</button>
+          <button class="filter-chip" onclick="setFilter('accepted',this)">Accepted</button>
+          <button class="filter-chip" onclick="setFilter('declined',this)">Declined</button>
+          <button class="filter-chip" onclick="setFilter('done',this)">Done</button>
+          <button class="filter-chip" onclick="setFilter('escalated',this)">Escalated</button>
+          <button class="filter-chip" onclick="setFilter('skipped',this)">Skipped</button>
+          <button class="filter-chip" onclick="setFilter('duplicate',this)">🚫 Duplicates</button>
+          <button class="filter-chip" onclick="setFilter('recent-history',this)">⚠ History Flags</button>
+          <input class="search-input" placeholder="🔍 Search client, policy…" oninput="setSearch(this.value)">
+        </div>
+        <div class="card"><div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Client</th><th>Policy No</th><th>Sum Insured</th><th>Type</th><th>Risk Category</th><th>Location</th><th>Engineer</th><th>Status</th><th>Flags</th><th>Attempt</th><th></th></tr></thead>
+          <tbody id="assessments-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- ─── VRA QUEUE ─── -->
+      <div class="page" id="p-vra">
+        <div class="section-header">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="section-title">Virtual Risk Assessment Queue</div>
+              <div class="assessment-type-pill atp-vra">🖥 VRA · 5–100 Cr</div>
+            </div>
+            <div class="section-sub">Sum Insured ₹5–100 Cr · Remote assessment · No travel needed</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:14px;padding:14px 18px;border-left:3px solid var(--vra-color)">
+          <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--t2)">
+            <span style="font-size:18px">🖥</span>
+            <div><b style="color:var(--vra-color)">VRA Rule:</b> Engineers can complete virtual assessments from <b style="color:var(--t1)">any office location</b>. Calendar checked, no city-matching constraint.</div>
+          </div>
+        </div>
+        <div class="card"><div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Client</th><th>Sum Insured</th><th>Risk Category</th><th>Location</th><th>Assigned Engineer</th><th>Engineer Office</th><th>Flags</th><th>Status</th><th>Attempt</th><th></th></tr></thead>
+          <tbody id="vra-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- ─── PRA QUEUE ─── -->
+      <div class="page" id="p-pra">
+        <div class="section-header">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="section-title">Physical Risk Assessment Queue</div>
+              <div class="assessment-type-pill atp-pra">🏭 PRA · &gt;100 Cr</div>
+            </div>
+            <div class="section-sub">Sum Insured &gt;₹100 Cr · On-site inspection · City-matched</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:14px;padding:14px 18px;border-left:3px solid var(--pra-color)">
+          <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--t2)">
+            <span style="font-size:18px">🏭</span>
+            <div><b style="color:var(--pra-color)">PRA Rule:</b> Physical inspections require travel. System <b style="color:var(--t1)">prefers city-matched engineers</b>. Falls back to any available.</div>
+          </div>
+        </div>
+        <div class="card"><div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Client</th><th>Sum Insured</th><th>Risk Category</th><th>Risk City</th><th>Assigned Engineer</th><th>Engineer Office</th><th>City Match?</th><th>Flags</th><th>Status</th><th>Attempt</th><th></th></tr></thead>
+          <tbody id="pra-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- ─── ALLOCATION LOG ─── -->
+      <div class="page" id="p-allocation">
+        <div class="section-header">
+          <div><div class="section-title">Allocation Log</div><div class="section-sub">Every assignment attempt · Simulate responses below</div></div>
+        </div>
+        <div class="card"><div class="table-wrap"><table>
+          <thead><tr><th>Time</th><th>Assessment</th><th>Type</th><th>Engineer</th><th>Office</th><th>Attempt</th><th>Action</th><th>Response</th><th>Deadline</th><th>Simulate</th></tr></thead>
+          <tbody id="allocation-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- ─── HISTORY LOG ─── -->
+      <div class="page" id="p-historylog">
+        <div class="section-header">
+          <div><div class="section-title">History Log & Alerts</div><div class="section-sub">Duplicate scheduling prevention · 3-year re-inspection policy</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="clearHistoryAlerts()">✓ Dismiss All</button>
+        </div>
+        <!-- Rules explanation -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+          <div class="rule-item">
+            <div class="rule-icon" style="background:var(--rs);color:var(--red)">🚫</div>
+            <div style="flex:1">
+              <div class="rule-name">Duplicate Block</div>
+              <div class="rule-desc">If a company already has an active or pending assessment (assigned/accepted/done), it will NOT be re-scheduled. The system blocks it and shows it here.</div>
+            </div><span class="tag red">Blocked</span>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon" style="background:var(--warn-bg);color:var(--warn-color)">⚠</div>
+            <div style="flex:1">
+              <div class="rule-name">3-Year History Check</div>
+              <div class="rule-desc">If an assessment was completed ("done") for a company within the last 3 years, admin is notified. Scheduling proceeds but admin can override.</div>
+            </div><span class="tag warning">Notify</span>
+          </div>
+        </div>
+        <div id="history-alerts-list"></div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header">
+            <span class="card-title">All History Records</span>
+            <span class="tag orange" id="history-total-count">0 records</span>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Company</th><th>Assessment Type</th><th>Sum Insured</th><th>Completed On</th><th>Engineer</th><th>Months Ago</th><th>Flag</th></tr></thead>
+            <tbody id="history-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ─── ENGINEERS ─── -->
+      <div class="page" id="p-engineers">
+        <div class="section-header">
+          <div><div class="section-title">Risk Engineers</div><div class="section-sub">20 engineers across 7 cities · Calendar & availability</div></div>
+          <div style="display:flex;gap:9px;align-items:center">
+            <div id="ws-indicator2" class="work-status working"><div class="ws-dot"></div><span id="ws-label2">—</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="renderEngineers()">↻ Refresh</button>
+          </div>
+        </div>
+        <div class="stat-grid-3" style="margin-bottom:20px">
+          <div class="stat-card teal"><div class="stat-glow"></div><div class="stat-label">Delhi NCR</div><div class="stat-value" id="city-delhi" style="font-size:22px">—</div><div class="stat-sub">Engineers based here</div></div>
+          <div class="stat-card orange"><div class="stat-glow"></div><div class="stat-label">Mumbai</div><div class="stat-value" id="city-mumbai" style="font-size:22px">—</div><div class="stat-sub">Engineers based here</div></div>
+          <div class="stat-card amber"><div class="stat-glow"></div><div class="stat-label">Other Cities</div><div class="stat-value" id="city-others" style="font-size:22px">—</div><div class="stat-sub">Ahmedabad, Pune, Hyd, Nashik, Aurangabad</div></div>
+        </div>
+        <div class="filter-row" style="margin-bottom:16px">
+          <button class="filter-chip on" onclick="filterEngCity('all',this)">All Cities</button>
+          <button class="filter-chip" onclick="filterEngCity('Delhi NCR',this)">Delhi NCR</button>
+          <button class="filter-chip" onclick="filterEngCity('Mumbai',this)">Mumbai</button>
+          <button class="filter-chip" onclick="filterEngCity('Ahmedabad',this)">Ahmedabad</button>
+          <button class="filter-chip" onclick="filterEngCity('Pune',this)">Pune</button>
+          <button class="filter-chip" onclick="filterEngCity('Hyderabad',this)">Hyderabad</button>
+          <button class="filter-chip" onclick="filterEngCity('Nashik',this)">Nashik</button>
+          <button class="filter-chip" onclick="filterEngCity('Aurangabad',this)">Aurangabad</button>
+        </div>
+        <div class="eng-grid" id="eng-grid"></div>
+      </div>
+
+      <!-- ─── RULES ─── -->
+      <div class="page" id="p-rules">
+        <div class="section-header"><div class="section-title">Rules & Configuration</div></div>
+        <div class="stat-grid-2">
+          <div>
+            <div style="font-family:var(--fm);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:9px">Business Rules</div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--vra-bg);color:var(--vra-color)">🖥</div><div style="flex:1"><div class="rule-name">VRA — Virtual Assessment</div><div class="rule-desc">₹5–100 Cr. Engineer from any office. Calendar checked.</div></div><span class="tag cyan">5–100 Cr</span></div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--pra-bg);color:var(--pra-color)">🏭</div><div style="flex:1"><div class="rule-name">PRA — Physical Assessment</div><div class="rule-desc">Above ₹100 Cr. On-site travel. City-matched engineer preferred.</div></div><span class="tag purple">&gt;100 Cr</span></div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--os);color:var(--orange)">↻</div><div style="flex:1"><div class="rule-name">Round-Robin Allocation</div><div class="rule-desc">Strict rotation across all 20 engineers. Equal distribution.</div></div><span class="tag orange">Active</span></div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--bs);color:#6ba3ff">⏱</div><div style="flex:1"><div class="rule-name">8-Hour Reply Deadline</div><div class="rule-desc">No response = auto-declined and re-allocated to next engineer.</div></div><span class="tag orange">8 hrs</span></div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--rs);color:var(--red)">↑</div><div style="flex:1"><div class="rule-name">3 Attempts → Escalate</div><div class="rule-desc">After 3 declined/timeout attempts, escalates to admin.</div></div><span class="tag red">3 tries</span></div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--rs);color:var(--red)">🚫</div><div style="flex:1"><div class="rule-name">Duplicate Prevention</div><div class="rule-desc">Company with active/done assessment is blocked from being re-scheduled in the same session.</div></div><span class="tag red">Blocked</span></div>
+            <div class="rule-item"><div class="rule-icon" style="background:var(--warn-bg);color:var(--warn-color)">⚠</div><div style="flex:1"><div class="rule-name">3-Year History Alert</div><div class="rule-desc">If a company had an inspection within 3 years, admin is notified. Assessment can still proceed unless admin overrides.</div></div><span class="tag warning">Notify</span></div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:9px">Configuration</div>
+            <div class="card"><div class="card-body">
+              <div class="form-row"><div class="form-group"><label class="form-label">Work Start</label><input class="form-input" type="time" value="10:00" id="cfg-ws"></div><div class="form-group"><label class="form-label">Work End</label><input class="form-input" type="time" value="18:00" id="cfg-we"></div></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">Lunch Start</label><input class="form-input" type="time" value="13:00" id="cfg-ls"></div><div class="form-group"><label class="form-label">Lunch End</label><input class="form-input" type="time" value="14:00" id="cfg-le"></div></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">Reply Deadline (hrs)</label><input class="form-input" type="number" value="8" id="cfg-dl" min="1"></div><div class="form-group"><label class="form-label">Max Attempts</label><input class="form-input" type="number" value="3" id="cfg-ma" min="1"></div></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">VRA Min (₹ Cr)</label><input class="form-input" type="number" value="5" id="cfg-vra-min" min="0"></div><div class="form-group"><label class="form-label">VRA Max / PRA Start (₹ Cr)</label><input class="form-input" type="number" value="100" id="cfg-vra-max" min="1"></div></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">History Window (years)</label><input class="form-input" type="number" value="3" id="cfg-hist-years" min="1" max="10"></div></div>
+              <button class="btn btn-primary" onclick="saveConfig()">Save Configuration</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── AUDIT ─── -->
+      <div class="page" id="p-audit">
+        <div class="section-header">
+          <div><div class="section-title">Audit Log</div><div class="section-sub">Full timestamped event history</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="clearAudit()">Clear Log</button>
+        </div>
+        <div class="card"><div class="card-body" style="padding:8px 18px">
+          <div id="audit-timeline"></div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!--  ENGINEER PORTAL-->
+<div id="eng-screen">
+  <header class="ep-topbar">
+    <div class="ep-logo">
+      <div class="ep-logo-icon">⚡</div>
+      <div class="ep-logo-name">RiskFlow Pro</div>
+      <span style="font-family:var(--fm);font-size:9px;color:var(--t3);margin-left:5px">ENGINEER PORTAL</span>
+    </div>
+    <div class="ep-topbar-right">
+      <div class="theme-toggle" onclick="toggleTheme()" style="font-size:10.5px">
+        <span id="theme-label-eng">🌙</span>
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      </div>
+      <div id="ep-ws" class="work-status working"><div class="ws-dot"></div><span id="ep-wsl">Working hours</span></div>
+      <div id="ep-avatar" class="ep-avatar" style="background:var(--os);color:var(--orange)">--</div>
+      <div>
+        <div class="ep-username" id="ep-name">Engineer</div>
+        <div class="ep-city-label" id="ep-city-label">—</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="ep-content">
+    <div class="ep-greeting-block">
+      <h1 class="ep-greeting-h" id="ep-greeting">Good morning, Engineer</h1>
+      <p class="ep-greeting-sub" id="ep-greeting-sub">Review your assigned risk assessments below.</p>
+    </div>
+
+    <div class="stat-grid-3" style="margin-bottom:28px">
+      <div class="stat-card amber"><div class="stat-glow"></div><div class="stat-label">Pending Action</div><div class="stat-value" id="eps-pending">0</div><div class="stat-sub">Awaiting your response</div></div>
+      <div class="stat-card teal"><div class="stat-glow"></div><div class="stat-label">Accepted</div><div class="stat-value" id="eps-accepted">0</div><div class="stat-sub">Confirmed by you</div></div>
+      <div class="stat-card orange"><div class="stat-glow"></div><div class="stat-label">Total Assigned</div><div class="stat-value" id="eps-total">0</div><div class="stat-sub">All time to you</div></div>
+    </div>
+
+    <div class="ep-tabs">
+      <div class="ep-tab on" onclick="epTabSwitch('pending',this)">Pending</div>
+      <div class="ep-tab" onclick="epTabSwitch('accepted',this)">Accepted</div>
+      <div class="ep-tab" onclick="epTabSwitch('done',this)">Mark Done</div>
+      <div class="ep-tab" onclick="epTabSwitch('history',this)">History</div>
+    </div>
+
+    <div id="ep-pending-view" class="task-list"></div>
+    <div id="ep-accepted-view" class="task-list hidden"></div>
+    <div id="ep-done-view" class="task-list hidden"></div>
+    <div id="ep-history-view" class="task-list hidden"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="main-modal">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span id="modal-title-text">Detail</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+
+//  THEME
+
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('rfTheme',next);
+  updateThemeLabels();
+}
+function updateThemeLabels(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const labels=isDark?'🌙 Dark':'☀️ Light';
+  ['login','admin','eng'].forEach(id=>{
+    const el=document.getElementById('theme-label-'+id);
+    if(el)el.textContent=id==='eng'?(isDark?'🌙':'☀️'):labels;
+  });
+}
+(function(){
+  const saved=localStorage.getItem('rfTheme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  updateThemeLabels();
+})();
+
+
+//  DATA
+
+const CITIES=['Delhi NCR','Mumbai','Ahmedabad','Pune','Hyderabad','Nashik','Aurangabad'];
+
+const ENGINEERS=[
+  {id:'E01',name:'Arjun Mehta',    av:'AM',color:'#ff7a20',city:'Delhi NCR',  email:'arjun.mehta',   speciality:['Fire & Allied','Industrial All Risk','Property'],tasks:[]},
+  {id:'E02',name:'Priya Sharma',   av:'PS',color:'#00c896',city:'Delhi NCR',  email:'priya.sharma',  speciality:['Petrochemical','Power Plant','Mining'],tasks:[]},
+  {id:'E03',name:'Rohit Kapoor',   av:'RK',color:'#f59e0b',city:'Delhi NCR',  email:'rohit.kapoor',  speciality:['Marine Cargo','Contractors All Risk'],tasks:[]},
+  {id:'E04',name:'Sunita Rao',     av:'SR',color:'#9b6ef3',city:'Delhi NCR',  email:'sunita.rao',    speciality:['Pharma','Electronic Equipment','Property'],tasks:[]},
+  {id:'E05',name:'Vikram Joshi',   av:'VJ',color:'#f03030',city:'Mumbai',     email:'vikram.joshi',  speciality:['Petrochemical','Marine Cargo'],tasks:[]},
+  {id:'E06',name:'Neha Patel',     av:'NP',color:'#06b6d4',city:'Mumbai',     email:'neha.patel',    speciality:['Property','Fire & Allied'],tasks:[]},
+  {id:'E07',name:'Amit Singh',     av:'AS',color:'#f472b6',city:'Mumbai',     email:'amit.singh',    speciality:['Power Plant','Industrial All Risk'],tasks:[]},
+  {id:'E08',name:'Kavya Nair',     av:'KN',color:'#84cc16',city:'Mumbai',     email:'kavya.nair',    speciality:['Financial Institution','Pharma'],tasks:[]},
+  {id:'E09',name:'Deepak Gupta',   av:'DG',color:'#fb923c',city:'Mumbai',     email:'deepak.gupta',  speciality:['Marine Cargo','Contractors All Risk'],tasks:[]},
+  {id:'E10',name:'Ritu Bansal',    av:'RB',color:'#e879f9',city:'Ahmedabad',  email:'ritu.bansal',   speciality:['Textile','Fire & Allied','Property'],tasks:[]},
+  {id:'E11',name:'Sanjay Mehta',   av:'SM',color:'#a3e635',city:'Ahmedabad',  email:'sanjay.mehta',  speciality:['Industrial All Risk','Chemical'],tasks:[]},
+  {id:'E12',name:'Divya Kulkarni', av:'DK',color:'#fbbf24',city:'Pune',       email:'divya.kulkarni',speciality:['IT Park','Electronic Equipment'],tasks:[]},
+  {id:'E13',name:'Rahul Desai',    av:'RD',color:'#34d399',city:'Pune',       email:'rahul.desai',   speciality:['Manufacturing','Industrial All Risk'],tasks:[]},
+  {id:'E14',name:'Sneha Joshi',    av:'SJ',color:'#60a5fa',city:'Pune',       email:'sneha.joshi',   speciality:['Pharma','Chemical','Property'],tasks:[]},
+  {id:'E15',name:'Kiran Reddy',    av:'KR',color:'#f87171',city:'Hyderabad',  email:'kiran.reddy',   speciality:['IT Park','Electronic Equipment'],tasks:[]},
+  {id:'E16',name:'Anita Varma',    av:'AV',color:'#c084fc',city:'Hyderabad',  email:'anita.varma',   speciality:['Petrochemical','Power Plant'],tasks:[]},
+  {id:'E17',name:'Suresh Kumar',   av:'SK',color:'#2dd4bf',city:'Hyderabad',  email:'suresh.kumar',  speciality:['Mining','Industrial All Risk'],tasks:[]},
+  {id:'E18',name:'Pooja Wagh',     av:'PW',color:'#fb7185',city:'Nashik',     email:'pooja.wagh',    speciality:['Wine & Food','Agriculture','Property'],tasks:[]},
+  {id:'E19',name:'Manoj Shinde',   av:'MS',color:'#38bdf8',city:'Aurangabad', email:'manoj.shinde',  speciality:['Manufacturing','Textile'],tasks:[]},
+  {id:'E20',name:'Leena Patil',    av:'LP',color:'#a78bfa',city:'Aurangabad', email:'leena.patil',   speciality:['Sugar & Allied','Agricultural Processing'],tasks:[]},
+];
+
+ENGINEERS.forEach(e=>{
+  e.busyDates=[];
+  const today=new Date();
+  for(let i=0;i<14;i++){
+    if(Math.random()<0.25){
+      const d=new Date(today);d.setDate(today.getDate()+i);
+      e.busyDates.push(d.toDateString());
+    }
+  }
+});
+
+const CFG={
+  workStart:'10:00',workEnd:'18:00',
+  lunchStart:'13:00',lunchEnd:'14:00',
+  deadlineHrs:8,maxAttempts:3,
+  vraMin:5,vraMax:100,
+  historyYears:3
+};
+
+// ─── HISTORY DATABASE ───
+// Stores completed assessments (done in past sessions)
+// In production this would come from backend DB
+// We seed a few past records for demo
+const HISTORY_DB=[
+  {companyKey:'reliance industries ltd',companyName:'Reliance Industries Ltd',assessmentType:'PRA',sumInsured:820,completedAt:new Date(Date.now()-400*24*3600000).toISOString(),engId:'E05',policyNo:'POL-2022-011',location:'Mumbai'},
+  {companyKey:'infosys campus pune',companyName:'Infosys Campus Pune',assessmentType:'VRA',sumInsured:42,completedAt:new Date(Date.now()-900*24*3600000).toISOString(),engId:'E12',policyNo:'POL-2022-009',location:'Pune'},
+  {companyKey:'ntpc dadri power',companyName:'NTPC Dadri Power',assessmentType:'PRA',sumInsured:1100,completedAt:new Date(Date.now()-200*24*3600000).toISOString(),engId:'E01',policyNo:'POL-2023-006',location:'Delhi NCR'},
+  {companyKey:'cipla pharma nashik',companyName:'Cipla Pharma Nashik',assessmentType:'VRA',sumInsured:60,completedAt:new Date(Date.now()-1200*24*3600000).toISOString(),engId:'E18',policyNo:'POL-2021-007',location:'Nashik'},
+  {companyKey:'coal india mining',companyName:'Coal India Mining',assessmentType:'PRA',sumInsured:500,completedAt:new Date(Date.now()-100*24*3600000).toISOString(),engId:'E17',policyNo:'POL-2023-010',location:'Hyderabad'},
+];
+
+let RR=0;
+const ASSESSMENTS=[],ALLOC_LOG=[],AUDIT_LOG=[];
+// Active history alerts (dismissable)
+let HISTORY_ALERTS=[];
+let parsedRows=[],currentFilter='all',currentSearch='',engCityFilter2='all',currentUser=null,epTab='pending';
+
+const RISK_ICONS={'Fire & Allied':'🔥','Petrochemical':'⚗️','Industrial All Risk':'🏭','Marine Cargo':'🚢','Property':'🏢','Pharma':'💊','Mining':'⛏️','Power Plant':'⚡','Contractors All Risk':'🏗️','Electronic Equipment':'💻','IT Park':'🖥','Financial Institution':'🏦','Chemical':'🧪','Textile':'🧵','Manufacturing':'⚙️','Agricultural Processing':'🌾','Sugar & Allied':'🍬','Wine & Food':'🍷','Agriculture':'🌱'};
+
+
+//  HELPERS
+
+function getEng(id){return ENGINEERS.find(e=>e.id===id);}
+function engName(id){return getEng(id)?.name||'—';}
+function assessmentType(si){
+  if(si<CFG.vraMin)return'skipped';
+  if(si<=CFG.vraMax)return'VRA';
+  return'PRA';
+}
+function isBusy(eng,date){return eng.busyDates.includes(new Date(date||Date.now()).toDateString());}
+function companyKey(name){return String(name||'').toLowerCase().trim().replace(/\s+/g,' ');}
+
+// ─── HISTORY CHECKS ───
+function checkDuplicate(row){
+  // Check if there's an existing active assessment for this company
+  const key=companyKey(row.clientName);
+  return ASSESSMENTS.find(a=>
+    companyKey(a.clientName)===key &&
+    ['assigned','accepted','done'].includes(a.status)
+  );
+}
+
+function check3YearHistory(row){
+  const key=companyKey(row.clientName);
+  const cutoff=new Date(Date.now()-CFG.historyYears*365*24*3600000);
+  // Check history DB
+  const fromDB=HISTORY_DB.find(h=>h.companyKey===key && new Date(h.completedAt)>=cutoff);
+  if(fromDB)return fromDB;
+  // Check current session done assessments
+  const fromSession=ASSESSMENTS.find(a=>
+    companyKey(a.clientName)===key &&
+    a.status==='done' &&
+    a.completedAt &&
+    new Date(a.completedAt)>=cutoff
+  );
+  return fromSession||null;
+}
+
+function monthsAgo(dateStr){
+  const diff=Date.now()-new Date(dateStr).getTime();
+  return Math.floor(diff/(30*24*3600000));
+}
+
+function toast(msg,type='info'){
+  const icons={ok:'✓',err:'✕',info:'ℹ',warn:'⚠'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span>${icons[type]||'•'}</span>${msg}`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(),3800);
+}
+
+function addAudit(icon,title,detail,color='orange'){
+  AUDIT_LOG.push({icon,title,detail,color,time:new Date().toISOString()});
+  const tl=document.getElementById('audit-timeline');
+  if(!tl)return;
+  tl.innerHTML=AUDIT_LOG.slice().reverse().map(e=>`
+    <div class="audit-entry">
+      <div class="audit-icon">${e.icon}</div>
+      <div class="audit-content"><div class="audit-title">${e.title}</div><div class="audit-detail">${e.detail}</div></div>
+      <div class="audit-time">${new Date(e.time).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+    </div>`).join('');
+}
+
+function statusTag(s){
+  const m={assigned:'amber',accepted:'teal',declined:'red',escalated:'red',pending:'amber',skipped:'gray',timeout:'amber',reallocated:'purple',done:'green',scheduled:'orange',duplicate:'red','recent-history':'warning'};
+  return`<span class="tag ${m[s]||'gray'}">${s}</span>`;
+}
+function typeTag(type){
+  if(type==='VRA')return`<span class="assessment-type-pill atp-vra">🖥 VRA</span>`;
+  if(type==='PRA')return`<span class="assessment-type-pill atp-pra">🏭 PRA</span>`;
+  return`<span class="tag gray">–</span>`;
+}
+
+function updateAlertsIndicator(){
+  const count=HISTORY_ALERTS.filter(a=>!a.dismissed).length;
+  const ind=document.getElementById('alerts-indicator');
+  const ac=document.getElementById('alert-count');
+  const st=document.getElementById('st-alerts');
+  const hb=document.getElementById('hist-badge-count');
+  if(ind){ind.style.display=count>0?'block':'none';}
+  if(ac)ac.textContent=count;
+  if(st)st.textContent=count;
+  if(hb){hb.textContent=count;hb.style.display=count>0?'inline-flex':'none';}
+}
+
+//  LOGIN
+
+function populateEngSelect(){
+  const sel=document.getElementById('eng-select');
+  sel.innerHTML=ENGINEERS.map(e=>`<option value="${e.id}">${e.name} (${e.id} · ${e.city})</option>`).join('');
+}
+populateEngSelect();
+
+function switchLoginTab(role,el){
+  document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('admin-fields').classList.toggle('hidden',role==='engineer');
+  document.getElementById('eng-fields').classList.toggle('hidden',role==='admin');
+}
+
+function doLogin(){
+  const isEng=!document.getElementById('eng-fields').classList.contains('hidden');
+  if(isEng){
+    if(document.getElementById('eng-pass').value!=='eng123'){toast('Incorrect password','err');return;}
+    const engId=document.getElementById('eng-select').value;
+    currentUser={role:'engineer',engId,eng:getEng(engId)};
+    showScreen('engineer');
+  }else{
+    if(document.getElementById('adm-pass').value!=='admin123'){toast('Incorrect password','err');return;}
+    currentUser={role:'admin'};
+    showScreen('admin');
+  }
+}
+
+function showScreen(role){
+  document.getElementById('login-screen').style.display='none';
+  if(role==='admin'){
+    document.getElementById('admin-screen').classList.add('on');
+    updateStats();renderKanban();renderEngineers();renderDashboardAlerts();updateAlertsIndicator();
+    addAudit('🔐','Admin logged in','Access granted');
+  }else{
+    const eng=currentUser.eng;
+    document.getElementById('eng-screen').classList.add('on');
+    document.getElementById('ep-avatar').textContent=eng.av;
+    document.getElementById('ep-avatar').style.background=eng.color+'22';
+    document.getElementById('ep-avatar').style.color=eng.color;
+    document.getElementById('ep-name').textContent=eng.name;
+    document.getElementById('ep-city-label').textContent=eng.id+' · '+eng.city+' Office';
+    const h=new Date().getHours();
+    document.getElementById('ep-greeting').textContent=(h<12?'Good morning, ':h<17?'Good afternoon, ':'Good evening, ')+eng.name.split(' ')[0];
+    renderEngPortal();
+    addAudit('🔐',eng.name+' logged in','Engineer portal');
+  }
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-screen').classList.remove('on');
+  document.getElementById('eng-screen').classList.remove('on');
+  toast('Signed out','info');
+}
+
+// ════════════════════════════════════════
+//  CLOCK & WORK STATUS
+// ════════════════════════════════════════
+function getWorkStatus(){
+  const n=new Date(),m=n.getHours()*60+n.getMinutes();
+  const p=s=>{const[h,mm]=s.split(':').map(Number);return h*60+mm};
+  if(m>=p(CFG.workStart)&&m<p(CFG.workEnd)){
+    if(m>=p(CFG.lunchStart)&&m<p(CFG.lunchEnd))return'lunch';
+    return'working';
+  }
+  return'off';
+}
+function updateClock(){
+  const t=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+  const cl=document.getElementById('clock-el');if(cl)cl.textContent=t;
+  const st=getWorkStatus(),labels={working:'Working hours',lunch:'Lunch break',off:'Out of hours'};
+  ['','2'].forEach(s=>{
+    const ind=document.getElementById('ws-indicator'+s),lbl=document.getElementById('ws-label'+s);
+    if(!ind)return;ind.className='work-status '+st;lbl.textContent=labels[st];
+  });
+  const epWs=document.getElementById('ep-ws'),epWsl=document.getElementById('ep-wsl');
+  if(epWs){epWs.className='work-status '+st;epWsl.textContent=labels[st];}
+}
+setInterval(updateClock,1000);updateClock();
+
+
+//  NAVIGATION
+
+const PAGE_TITLES={dashboard:'Dashboard',upload:'Upload Excel',assessments:'All Assessments',vra:'VRA Queue',pra:'PRA Queue',allocation:'Allocation Log',historylog:'History Log & Alerts',engineers:'Engineers',rules:'Rules & Config',audit:'Audit Log'};
+
+function navGo(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  const pg=document.getElementById('p-'+page);if(pg)pg.classList.add('on');
+  el?.classList.add('on');
+  document.getElementById('topbar-title').textContent=PAGE_TITLES[page]||page;
+  if(page==='engineers')renderEngineers();
+  if(page==='dashboard'){updateStats();renderKanban();renderDashboardAlerts();}
+  if(page==='assessments')renderAssessments();
+  if(page==='vra')renderVRA();
+  if(page==='pra')renderPRA();
+  if(page==='allocation')renderAllocLog();
+  if(page==='historylog')renderHistoryLog();
+}
+
+function quickFilter(f){
+  currentFilter=f==='vra'?'vra-only':f==='pra'?'pra-only':f;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  document.querySelectorAll('.nav-item')[2]?.classList.add('on');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p-assessments').classList.add('on');
+  document.getElementById('topbar-title').textContent='All Assessments';
+  document.querySelectorAll('#p-assessments .filter-chip').forEach(c=>c.classList.remove('on'));
+  renderAssessments();
+}
+
+// ════════════════════════════════════════
+//  FILE UPLOAD
+// ════════════════════════════════════════
+function onDrag(e,type){e.preventDefault();document.getElementById('upload-zone').classList.toggle('drag',type==='over');}
+function onDrop(e){e.preventDefault();document.getElementById('upload-zone').classList.remove('drag');if(e.dataTransfer.files[0])processFile(e.dataTransfer.files[0]);}
+function onFileSelect(e){if(e.target.files[0])processFile(e.target.files[0]);}
+
+function processFile(f){
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+      if(!rows.length){toast('File is empty','err');return;}
+      parsedRows=rows.map(normalizeRow);
+      showPreview(f.name,parsedRows);
+      addAudit('📤','File uploaded: '+f.name,parsedRows.length+' rows parsed');
+    }catch(ex){toast('Parse error: '+ex.message,'err');}
+  };r.readAsArrayBuffer(f);
+}
+
+function normalizeRow(r){
+  const keys=Object.keys(r);
+  const get=ps=>{for(const p of ps){const k=keys.find(k=>k.toLowerCase().includes(p.toLowerCase()));if(k)return r[k];}return'';};
+  const rawSI=get(['sum insured','sum_insured','suminsured','si','insured','amount']);
+  const si=parseFloat(String(rawSI).replace(/[^0-9.]/g,''))||0;
+  const rawCity=get(['location','city','site','address','place']);
+  const cityStr=String(rawCity||'');
+  const matchedCity=CITIES.find(c=>cityStr.toLowerCase().includes(c.toLowerCase().split(' ')[0]))||cityStr||'Unknown';
+  const name=String(get(['client name','client_name','clientname','name','company'])||'Unknown');
+  return{
+    clientName:name,
+    policyNo:String(get(['policy no','policy_no','policyno','policy number','policy'])||'—'),
+    sumInsured:si,
+    riskType:String(get(['risk type','risk_type','risktype','type','class','occupancy'])||'General'),
+    location:matchedCity,
+    rawLocation:cityStr,
+    assessmentType:assessmentType(si),
+  };
+}
+
+function showPreview(fname,rows){
+  const vra=rows.filter(r=>r.assessmentType==='VRA');
+  const pra=rows.filter(r=>r.assessmentType==='PRA');
+  const skip=rows.filter(r=>r.assessmentType==='skipped');
+
+  // Check for dups and history
+  const dups=rows.filter(r=>r.assessmentType!=='skipped'&&checkDuplicate(r));
+  const histRows=rows.filter(r=>r.assessmentType!=='skipped'&&!checkDuplicate(r)&&check3YearHistory(r));
+
+  document.getElementById('preview-title').textContent='Preview — '+fname;
+  document.getElementById('prev-total').textContent=rows.length+' rows';
+  document.getElementById('prev-vra').textContent=vra.length+' VRA';
+  document.getElementById('prev-pra').textContent=pra.length+' PRA';
+
+  const dupEl=document.getElementById('prev-dup');
+  const histEl=document.getElementById('prev-hist');
+  if(dups.length>0){dupEl.textContent=dups.length+' Duplicates';dupEl.style.display='inline-flex';}else{dupEl.style.display='none';}
+  if(histRows.length>0){histEl.textContent=histRows.length+' Recent History';histEl.style.display='inline-flex';}else{histEl.style.display='none';}
+
+  // Show flags above table
+  let flagsHtml='';
+  if(dups.length>0){
+    flagsHtml+=`<div class="dup-banner">
+      <div class="dup-banner-icon">🚫</div>
+      <div>
+        <div class="dup-banner-title">Duplicate Alert — ${dups.length} company(ies) already have active assessments</div>
+        <div class="dup-banner-detail">${dups.map(r=>`<b>${r.clientName}</b>`).join(', ')} — These will be BLOCKED from scheduling. An active or completed assessment already exists for this session.</div>
+      </div>
+    </div>`;
+  }
+  if(histRows.length>0){
+    flagsHtml+=`<div class="history-banner">
+      <div class="history-banner-icon">⚠</div>
+      <div>
+        <div class="history-banner-title">3-Year History Notice — ${histRows.length} company(ies) had recent inspections</div>
+        <div class="history-banner-detail">${histRows.map(r=>{const h=check3YearHistory(r);return`<b>${r.clientName}</b> (${monthsAgo(h.completedAt)} months ago)`;}).join(' · ')} — Scheduling will proceed but admin will be notified.</div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('upload-flags-section').innerHTML=flagsHtml;
+
+  document.getElementById('preview-section').style.display='block';
+  document.getElementById('prev-head').innerHTML='<tr><th>Client</th><th>Policy</th><th>Sum Insured</th><th>Assessment Type</th><th>Risk Category</th><th>Location</th><th>Flag</th></tr>';
+  document.getElementById('prev-body').innerHTML=rows.slice(0,25).map(r=>{
+    const isSkip=r.assessmentType==='skipped';
+    const isDup=!isSkip&&!!checkDuplicate(r);
+    const hist=!isSkip&&!isDup&&check3YearHistory(r);
+    let flag='';
+    if(isDup)flag=`<span class="dup-badge">🚫 Duplicate</span>`;
+    else if(hist)flag=`<span class="hist-badge">⚠ ${monthsAgo(hist.completedAt)}mo ago</span>`;
+    else if(!isSkip)flag=`<span class="tag green">✓ Clear</span>`;
+    return`<tr style="opacity:${isSkip?.4:1}" class="${isDup?'row-dup':hist?'row-hist':''}">
+      <td class="td-name" style="font-size:12px">${r.clientName}</td>
+      <td class="td-mono">${r.policyNo}</td>
+      <td class="td-amt">₹${r.sumInsured>0?r.sumInsured.toFixed(2):'—'}Cr</td>
+      <td>${r.assessmentType==='VRA'?`<span class="assessment-type-pill atp-vra">🖥 VRA</span>`:r.assessmentType==='PRA'?`<span class="assessment-type-pill atp-pra">🏭 PRA</span>`:`<span class="tag gray">Skipped</span>`}</td>
+      <td style="font-size:12px">${r.riskType}</td>
+      <td style="font-size:12px">${r.location}</td>
+      <td>${flag}</td>
+    </tr>`;
+  }).join('');
+
+  toast(`${rows.length} rows · ${vra.length} VRA · ${pra.length} PRA · ${skip.length} skipped${dups.length?` · ${dups.length} dup blocked`:''}${histRows.length?` · ${histRows.length} history flagged`:''}`,'ok');
+}
+function clearUpload(){parsedRows=[];document.getElementById('preview-section').style.display='none';document.getElementById('upload-flags-section').innerHTML='';}
+
+
+//  ALLOCATION ENGINE
+
+function makeAssessment(row,status){
+  return{
+    id:'RA-'+Date.now()+'-'+Math.random().toString(36).slice(2,4).toUpperCase(),
+    ...row,
+    status,
+    assignedTo:null,
+    attempt:0,
+    tried:[],
+    deadline:null,
+    createdAt:new Date().toISOString(),
+    completedAt:null,
+    historyFlag:null,   // {completedAt, engId, monthsAgo}
+    isDuplicate:false,
+  };
+}
+
+function addAllocLog(asmt,eng,attempt,action){
+  ALLOC_LOG.push({
+    time:new Date().toISOString(),
+    asmtId:asmt.id,
+    client:asmt.clientName,
+    assessmentType:asmt.assessmentType,
+    engId:eng?.id||null,
+    engName:eng?.name||'—',
+    engCity:eng?.city||'—',
+    attempt,action,
+    response:'pending',
+    deadline:asmt.deadline
+  });
+}
+
+function nextEligibleEng(asmt,exclude=[]){
+  const loc=asmt.location;
+  const isVRA=asmt.assessmentType==='VRA';
+  const isPRA=asmt.assessmentType==='PRA';
+  const today=new Date().toDateString();
+  let candidates=ENGINEERS.filter(e=>!exclude.includes(e.id));
+
+  if(isPRA){
+    const cityMatch=candidates.filter(e=>e.city.toLowerCase()===loc.toLowerCase()||e.city.toLowerCase().includes(loc.toLowerCase().split(' ')[0]));
+    const cityAvail=cityMatch.filter(e=>!isBusy(e,today));
+    if(cityAvail.length>0){
+      const idx=cityAvail.reduce((best,e)=>{const ei=ENGINEERS.indexOf(e);const bi=ENGINEERS.indexOf(best);return((ei-RR+20)%20)<((bi-RR+20)%20)?e:best;},cityAvail[0]);
+      RR=(ENGINEERS.indexOf(idx)+1)%ENGINEERS.length;
+      return{eng:idx,cityMatch:true};
+    }
+    const anyAvail=candidates.filter(e=>!isBusy(e,today));
+    if(anyAvail.length>0){
+      const idx=anyAvail.reduce((best,e)=>{const ei=ENGINEERS.indexOf(e);const bi=ENGINEERS.indexOf(best);return((ei-RR+20)%20)<((bi-RR+20)%20)?e:best;},anyAvail[0]);
+      RR=(ENGINEERS.indexOf(idx)+1)%ENGINEERS.length;
+      return{eng:idx,cityMatch:false};
+    }
+  }
+
+  for(let i=0;i<ENGINEERS.length;i++){
+    const idx=(RR+i)%ENGINEERS.length;
+    const eng=ENGINEERS[idx];
+    if(exclude.includes(eng.id))continue;
+    if(isVRA&&isBusy(eng,today))continue;
+    RR=(idx+1)%ENGINEERS.length;
+    return{eng,cityMatch:null};
+  }
+  for(let i=0;i<ENGINEERS.length;i++){
+    const idx=(RR+i)%ENGINEERS.length;
+    const eng=ENGINEERS[idx];
+    if(!exclude.includes(eng.id)){RR=(idx+1)%ENGINEERS.length;return{eng,cityMatch:null};}
+  }
+  return null;
+}
+
+function runAllocation(){
+  const eligible=parsedRows.filter(r=>r.assessmentType!=='skipped');
+  const skipped=parsedRows.filter(r=>r.assessmentType==='skipped');
+  if(!eligible.length){toast('No eligible rows (all below ₹'+CFG.vraMin+'Cr)','err');return;}
+  const now=new Date();
+
+  skipped.forEach(r=>{
+    const a=makeAssessment(r,'skipped');
+    ASSESSMENTS.push(a);
+    addAudit('⊘','Skipped: '+r.clientName,'₹'+r.sumInsured+'Cr < ₹'+CFG.vraMin+'Cr threshold','gray');
+  });
+
+  let allocCount=0,dupCount=0,histCount=0;
+
+  eligible.forEach(r=>{
+    // ─── CHECK 1: Duplicate block ───
+    const dupExisting=checkDuplicate(r);
+    if(dupExisting){
+      const a=makeAssessment(r,'duplicate');
+      a.isDuplicate=true;
+      a.duplicateOf=dupExisting.id;
+      ASSESSMENTS.push(a);
+      dupCount++;
+      addAudit('🚫','BLOCKED (Duplicate): '+r.clientName,'Active assessment already exists: '+dupExisting.id,'red');
+      toast('🚫 Blocked: '+r.clientName+' already scheduled','warn');
+      return;
+    }
+
+    // ─── CHECK 2: 3-year history ───
+    const histRecord=check3YearHistory(r);
+    
+    const a=makeAssessment(r,'assigned');
+    if(histRecord){
+      const ma=monthsAgo(histRecord.completedAt||histRecord.createdAt);
+      a.historyFlag={
+        completedAt:histRecord.completedAt||histRecord.createdAt,
+        engId:histRecord.engId||histRecord.assignedTo,
+        monthsAgo:ma,
+        years:(ma/12).toFixed(1),
+        policyNo:histRecord.policyNo||'—'
+      };
+      histCount++;
+      // Add to alert queue
+      HISTORY_ALERTS.push({
+        id:'HA-'+Date.now()+'-'+Math.random().toString(36).slice(2,4),
+        companyName:r.clientName,
+        assessmentType:r.assessmentType,
+        sumInsured:r.sumInsured,
+        histRecord,
+        monthsAgo:ma,
+        dismissed:false,
+        asmtId:a.id
+      });
+      addAudit('⚠','History Alert: '+r.clientName,`Last assessed ${ma} months ago — scheduling proceeds, admin notified`,'amber');
+    }
+
+    // ─── Allocate ───
+    const result=nextEligibleEng(a,[]);
+    if(!result){
+      a.status='escalated';
+      ASSESSMENTS.push(a);
+      addAudit('🚨','Escalated: '+r.clientName,'No engineers available','red');
+      return;
+    }
+    const{eng,cityMatch}=result;
+    a.assignedTo=eng.id;a.attempt=1;a.tried=[eng.id];
+    a.deadline=new Date(now.getTime()+CFG.deadlineHrs*3600000).toISOString();
+    a.cityMatch=cityMatch;
+    eng.tasks.push({asmtId:a.id,status:'assigned'});
+    addAllocLog(a,eng,1,'assigned');
+    const cityNote=a.assessmentType==='PRA'?(cityMatch?' ✓ city match':' ⚠ no city match (fallback)'):'';
+    addAudit('📤',`[${a.assessmentType}] Assigned: ${r.clientName}${a.historyFlag?' ⚠ hist':''}`,
+      '→ '+eng.name+' ('+eng.city+')'+cityNote+' attempt 1');
+    ASSESSMENTS.push(a);
+    allocCount++;
+  });
+
+  const msg=`✓ ${allocCount} allocated · ${dupCount} blocked · ${histCount} history flags · ${skipped.length} skipped`;
+  toast(msg,'ok');
+  updateStats();renderKanban();renderAllocLog();renderAssessments();renderDashboardAlerts();
+  updateAlertsIndicator();
+  if(currentUser?.role==='engineer')renderEngPortal();
+  navGo('dashboard',document.querySelectorAll('.nav-item')[0]);
+}
+
+
+//  RESPONSE HANDLING
+
+function processResponse(asmtId,action){
+  const a=ASSESSMENTS.find(x=>x.id===asmtId);if(!a)return;
+  const log=ALLOC_LOG.slice().reverse().find(l=>l.asmtId===asmtId&&l.response==='pending');
+  if(!log){toast('Already resolved','err');return;}
+  log.response=action;
+  const eng=getEng(log.engId);
+
+  if(action==='accepted'){
+    a.status='accepted';
+    eng?.tasks.forEach(t=>{if(t.asmtId===a.id)t.status='accepted';});
+    addAudit('✅','Accepted: '+a.clientName,(eng?.name||'—')+' confirmed ['+a.assessmentType+']');
+    toast((eng?.name||'—')+' accepted','ok');
+  }else{
+    a.status='declined';
+    eng?.tasks.forEach(t=>{if(t.asmtId===a.id)t.status='declined';});
+    const reasonLabel=action==='timeout'?'timed out':'declined';
+    addAudit('❌',action==='timeout'?'Timeout':'Declined: '+a.clientName,(eng?.name||'—')+' '+reasonLabel,'red');
+    if(a.attempt<CFG.maxAttempts){
+      const result=nextEligibleEng(a,a.tried);
+      if(result){
+        const{eng:nx,cityMatch}=result;
+        a.attempt++;a.tried.push(nx.id);a.assignedTo=nx.id;a.status='assigned';
+        a.deadline=new Date(Date.now()+CFG.deadlineHrs*3600000).toISOString();
+        a.cityMatch=cityMatch;
+        nx.tasks.push({asmtId:a.id,status:'assigned'});
+        addAllocLog(a,nx,a.attempt,'reallocated');
+        addAudit('🔄','Re-allocated: '+a.clientName,'→ '+nx.name+' ('+nx.city+') attempt '+a.attempt,'purple');
+        toast('Re-assigned to '+nx.name,'info');
+      }else{
+        a.status='escalated';
+        addAudit('🚨','Escalated: '+a.clientName,'No more engineers available','red');
+        toast('Escalated to admin','warn');
+      }
+    }else{
+      a.status='escalated';
+      addAudit('🚨','Escalated: '+a.clientName,'Max '+CFG.maxAttempts+' attempts reached','red');
+      toast('Escalated — max attempts reached','warn');
+    }
+  }
+  updateStats();renderKanban();renderAllocLog();renderAssessments();renderVRA();renderPRA();
+  if(currentUser?.role==='engineer')renderEngPortal();
+}
+
+function markDone(asmtId){
+  const a=ASSESSMENTS.find(x=>x.id===asmtId);if(!a)return;
+  a.status='done';a.completedAt=new Date().toISOString();
+  const eng=getEng(a.assignedTo);
+  eng?.tasks.forEach(t=>{if(t.asmtId===a.id)t.status='done';});
+  // Add to history DB for future checks
+  HISTORY_DB.push({
+    companyKey:companyKey(a.clientName),
+    companyName:a.clientName,
+    assessmentType:a.assessmentType,
+    sumInsured:a.sumInsured,
+    completedAt:a.completedAt,
+    engId:a.assignedTo,
+    policyNo:a.policyNo,
+    location:a.location
+  });
+  addAudit('✔','Inspection done: '+a.clientName,eng?.name+' marked complete ['+a.assessmentType+']','green');
+  toast('Marked as done ✔ · Added to 3-year history','ok');
+  updateStats();renderKanban();renderEngPortal();
+}
+
+// ════════════════════════════════════════
+//  ADMIN RENDERS
+// ════════════════════════════════════════
+const KB_COLS=[
+  {key:'assigned',   label:'Pending Reply',    dot:'var(--amber)', color:'#f59e0b'},
+  {key:'accepted',   label:'Accepted',          dot:'var(--teal)',  color:'#00c896'},
+  {key:'done',       label:'Inspection Done',   dot:'var(--green)', color:'#22c55e'},
+  {key:'escalated',  label:'Escalated',         dot:'var(--red)',   color:'#f03030'},
+  {key:'duplicate',  label:'Blocked (Dup)',     dot:'var(--red)',   color:'#f03030'},
+];
+
+function renderKanban(){
+  const board=document.getElementById('kanban-board');if(!board)return;
+  board.innerHTML=KB_COLS.map(col=>{
+    const cards=ASSESSMENTS.filter(a=>a.status===col.key);
+    return`<div class="kb-col">
+      <div class="kb-col-header">
+        <div class="kb-col-title"><div class="kb-dot" style="background:${col.dot}"></div>${col.label}</div>
+        <div class="kb-count">${cards.length}</div>
+      </div>
+      <div class="kb-cards">
+        ${cards.length?cards.map(a=>kbCard(a,col.color)).join(''):`<div class="kb-empty"><div style="font-size:20px;opacity:.2;margin-bottom:5px">◻</div>Empty</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function kbCard(a,color){
+  const eng=getEng(a.assignedTo);
+  const typeIcon=a.assessmentType==='VRA'?'🖥':a.assessmentType==='PRA'?'🏭':'';
+  const histFlag=a.historyFlag?`<div class="kb-card-history-flag">⚠ ${a.historyFlag.monthsAgo}mo ago</div>`:'';
+  const dupFlag=a.isDuplicate?`<div class="kb-card-dup-flag">🚫 Duplicate</div>`:'';
+  return`<div class="kb-card" onclick="showAssessmentDetail('${a.id}')">
+    <div class="kb-card-stripe" style="background:${a.isDuplicate?'var(--red)':a.historyFlag?'var(--amber)':color}"></div>
+    <div class="kb-card-client">${typeIcon} ${a.clientName}</div>
+    <div class="kb-card-row">
+      <span class="kb-card-amount">₹${a.sumInsured.toFixed(0)}Cr</span>
+      <span class="kb-card-type">${a.assessmentType||'–'}</span>
+    </div>
+    <div style="font-size:10px;color:var(--t3)">${a.riskType}</div>
+    ${histFlag}${dupFlag}
+    ${eng?`<div class="kb-card-eng"><div style="width:5px;height:5px;border-radius:50%;background:${eng.color};flex-shrink:0"></div>${eng.name} · ${eng.city}${a.attempt>1?` <span class="tag purple" style="margin-left:auto;font-size:9px">Try ${a.attempt}</span>`:''}</div>`:''}
+  </div>`;
+}
+
+function updateStats(){
+  const all=ASSESSMENTS;
+  document.getElementById('st-total').textContent=all.filter(a=>a.status!=='skipped'&&a.status!=='duplicate').length;
+  document.getElementById('st-vra').textContent=all.filter(a=>a.assessmentType==='VRA'&&a.status!=='duplicate').length;
+  document.getElementById('st-pra').textContent=all.filter(a=>a.assessmentType==='PRA'&&a.status!=='duplicate').length;
+  document.getElementById('st-pending').textContent=all.filter(a=>a.status==='assigned').length;
+  document.getElementById('st-accepted').textContent=all.filter(a=>a.status==='accepted').length;
+  document.getElementById('st-escalated').textContent=all.filter(a=>a.status==='escalated').length;
+  document.getElementById('st-done').textContent=all.filter(a=>a.status==='done').length;
+  updateAlertsIndicator();
+}
+
+function renderDashboardAlerts(){
+  const el=document.getElementById('dashboard-alerts');if(!el)return;
+  const active=HISTORY_ALERTS.filter(a=>!a.dismissed);
+  const dups=ASSESSMENTS.filter(a=>a.isDuplicate);
+  let html='';
+  if(dups.length>0){
+    html+=`<div class="alert-item err"><div class="alert-icon">🚫</div><div class="alert-content"><div class="alert-title">${dups.length} Duplicate(s) Blocked</div><div class="alert-desc">${dups.map(a=>a.clientName).join(', ')} — These companies already have active assessments and were not re-scheduled.</div></div></div>`;
+  }
+  if(active.length>0){
+    active.slice(0,3).forEach(ha=>{
+      html+=`<div class="alert-item warn">
+        <div class="alert-icon">⚠</div>
+        <div class="alert-content">
+          <div class="alert-title">3-Year History: ${ha.companyName}</div>
+          <div class="alert-desc">Last ${ha.histRecord.assessmentType||'assessment'} was <b>${ha.monthsAgo} months ago</b> (${(ha.monthsAgo/12).toFixed(1)} years). Policy: ${ha.histRecord.policyNo||'—'} · ₹${ha.histRecord.sumInsured||'—'}Cr. Assessment has been scheduled — review if re-inspection is appropriate.</div>
+        </div>
+        <button class="alert-close" onclick="dismissAlert('${ha.id}')">✕</button>
+      </div>`;
+    });
+    if(active.length>3){
+      html+=`<div style="font-size:11.5px;color:var(--t3);padding:6px 14px">+${active.length-3} more history alerts — <a href="#" onclick="navGo('historylog',document.querySelectorAll('.nav-item')[8]);return false" style="color:var(--orange)">View all in History Log</a></div>`;
+    }
+  }
+  el.innerHTML=html;
+}
+
+function dismissAlert(id){
+  const a=HISTORY_ALERTS.find(h=>h.id===id);
+  if(a)a.dismissed=true;
+  renderDashboardAlerts();
+  updateAlertsIndicator();
+}
+function clearHistoryAlerts(){
+  HISTORY_ALERTS.forEach(a=>a.dismissed=true);
+  renderDashboardAlerts();
+  renderHistoryLog();
+  updateAlertsIndicator();
+  toast('All alerts dismissed','info');
+}
+
+function flagsCell(a){
+  let f='';
+  if(a.isDuplicate)f+=`<span class="dup-badge">🚫 Dup</span> `;
+  if(a.historyFlag)f+=`<span class="hist-badge">⚠ ${a.historyFlag.monthsAgo}mo</span>`;
+  return f||`<span style="color:var(--t3);font-size:10px">—</span>`;
+}
+
+function setFilter(f,el){
+  currentFilter=f;
+  document.querySelectorAll('#p-assessments .filter-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');renderAssessments();
+}
+function setSearch(v){currentSearch=v.toLowerCase();renderAssessments();}
+
+function renderAssessments(){
+  let d=ASSESSMENTS;
+  if(currentFilter==='vra-only')d=d.filter(a=>a.assessmentType==='VRA');
+  else if(currentFilter==='pra-only')d=d.filter(a=>a.assessmentType==='PRA');
+  else if(currentFilter==='duplicate')d=d.filter(a=>a.isDuplicate);
+  else if(currentFilter==='recent-history')d=d.filter(a=>a.historyFlag);
+  else if(currentFilter!=='all')d=d.filter(a=>a.status===currentFilter);
+  if(currentSearch)d=d.filter(a=>a.clientName.toLowerCase().includes(currentSearch)||a.policyNo.toLowerCase().includes(currentSearch));
+  const tbody=document.getElementById('assessments-tbody');if(!tbody)return;
+  tbody.innerHTML=d.length?d.map((a,i)=>`<tr class="${a.isDuplicate?'row-dup':a.historyFlag?'row-hist':''}">
+    <td class="td-mono" style="color:var(--t3)">${i+1}</td>
+    <td class="td-name">${a.clientName}</td>
+    <td class="td-mono">${a.policyNo}</td>
+    <td class="td-amt">₹${a.sumInsured.toFixed(2)}Cr</td>
+    <td>${typeTag(a.assessmentType)}</td>
+    <td style="font-size:12px">${a.riskType}</td>
+    <td style="font-size:12px;color:var(--t2)">${a.location}</td>
+    <td style="font-size:12px">${a.assignedTo?`<span style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:${getEng(a.assignedTo)?.color||'#fff'};flex-shrink:0"></span>${engName(a.assignedTo)}</span>`:'—'}</td>
+    <td>${statusTag(a.status)}</td>
+    <td>${flagsCell(a)}</td>
+    <td class="td-mono">${a.attempt||'—'}</td>
+    <td><button class="btn btn-ghost btn-xs" onclick="showAssessmentDetail('${a.id}')">View</button></td>
+  </tr>`).join(''):`<tr><td colspan="12"><div class="empty-state" style="padding:32px"><div class="empty-icon">📋</div><div class="empty-title">No assessments</div></div></td></tr>`;
+}
+
+function renderVRA(){
+  const vra=ASSESSMENTS.filter(a=>a.assessmentType==='VRA'&&!a.isDuplicate);
+  const tbody=document.getElementById('vra-tbody');if(!tbody)return;
+  tbody.innerHTML=vra.length?vra.map((a,i)=>{
+    const eng=getEng(a.assignedTo);
+    return`<tr class="${a.historyFlag?'row-hist':''}">
+      <td class="td-mono" style="color:var(--t3)">${i+1}</td>
+      <td class="td-name">${a.clientName}</td>
+      <td class="td-amt">₹${a.sumInsured.toFixed(2)}Cr</td>
+      <td style="font-size:12px">${a.riskType}</td>
+      <td style="font-size:12px;color:var(--t2)">${a.location}</td>
+      <td style="font-size:12px">${eng?`<span style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:${eng.color};flex-shrink:0"></span>${eng.name}</span>`:'—'}</td>
+      <td><span class="tag orange" style="font-size:9.5px">${eng?.city||'—'}</span></td>
+      <td>${flagsCell(a)}</td>
+      <td>${statusTag(a.status)}</td>
+      <td class="td-mono">${a.attempt||'—'}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="showAssessmentDetail('${a.id}')">View</button></td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="11"><div class="empty-state" style="padding:24px"><div class="empty-icon" style="font-size:36px">🖥</div><div class="empty-title">No VRA assessments</div></div></td></tr>`;
+}
+
+function renderPRA(){
+  const pra=ASSESSMENTS.filter(a=>a.assessmentType==='PRA'&&!a.isDuplicate);
+  const tbody=document.getElementById('pra-tbody');if(!tbody)return;
+  tbody.innerHTML=pra.length?pra.map((a,i)=>{
+    const eng=getEng(a.assignedTo);const cm=a.cityMatch;
+    return`<tr class="${a.historyFlag?'row-hist':''}">
+      <td class="td-mono" style="color:var(--t3)">${i+1}</td>
+      <td class="td-name">${a.clientName}</td>
+      <td class="td-amt">₹${a.sumInsured.toFixed(2)}Cr</td>
+      <td style="font-size:12px">${a.riskType}</td>
+      <td><span class="tag orange" style="font-size:9.5px">📍 ${a.location}</span></td>
+      <td style="font-size:12px">${eng?`<span style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:${eng.color};flex-shrink:0"></span>${eng.name}</span>`:'—'}</td>
+      <td><span class="tag ${eng?.city===a.location?'teal':'amber'}" style="font-size:9.5px">${eng?.city||'—'}</span></td>
+      <td>${cm===true?`<span class="tag teal">✓ Match</span>`:cm===false?`<span class="tag amber">⚠ Fallback</span>`:`<span class="tag gray">—</span>`}</td>
+      <td>${flagsCell(a)}</td>
+      <td>${statusTag(a.status)}</td>
+      <td class="td-mono">${a.attempt||'—'}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="showAssessmentDetail('${a.id}')">View</button></td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="12"><div class="empty-state" style="padding:24px"><div class="empty-icon" style="font-size:36px">🏭</div><div class="empty-title">No PRA assessments</div></div></td></tr>`;
+}
+
+function renderAllocLog(){
+  const tbody=document.getElementById('allocation-tbody');if(!tbody)return;
+  tbody.innerHTML=ALLOC_LOG.length?ALLOC_LOG.map((l,i)=>{
+    const dl=l.deadline?new Date(l.deadline).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}):'—';
+    const btns=l.response==='pending'
+      ?`<div style="display:flex;gap:4px">
+          <button class="btn btn-teal btn-xs" onclick="simRespond(${i},'accepted')">✓</button>
+          <button class="btn btn-red btn-xs" onclick="simRespond(${i},'declined')">✗</button>
+          <button class="btn btn-ghost btn-xs" onclick="simRespond(${i},'timeout')" title="Timeout">⏱</button>
+        </div>`
+      :`<span style="color:var(--t3);font-size:10px">Resolved</span>`;
+    return`<tr>
+      <td class="td-mono" style="font-size:10px;color:var(--t3)">${new Date(l.time).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</td>
+      <td style="font-weight:500;font-size:12px">${l.client}</td>
+      <td>${l.assessmentType==='VRA'?`<span class="assessment-type-pill atp-vra" style="font-size:8.5px">VRA</span>`:`<span class="assessment-type-pill atp-pra" style="font-size:8.5px">PRA</span>`}</td>
+      <td style="font-size:12px">${l.engName}</td>
+      <td><span class="tag orange" style="font-size:9px">${l.engCity}</span></td>
+      <td class="td-mono">#${l.attempt}</td>
+      <td>${statusTag(l.action)}</td>
+      <td>${statusTag(l.response)}</td>
+      <td class="td-mono" style="font-size:10px;color:var(--t3)">${dl}</td>
+      <td>${btns}</td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="10"><div class="empty-state" style="padding:24px"><div class="empty-title">No records yet</div></div></td></tr>`;
+}
+
+function simRespond(i,action){
+  const log=ALLOC_LOG[i];if(!log)return;
+  processResponse(log.asmtId,action);
+}
+
+// ─── HISTORY LOG PAGE ───
+function renderHistoryLog(){
+  const active=HISTORY_ALERTS.filter(a=>!a.dismissed);
+  const listEl=document.getElementById('history-alerts-list');
+  if(!listEl)return;
+
+  if(!active.length&&!ASSESSMENTS.some(a=>a.isDuplicate)){
+    listEl.innerHTML=`<div class="empty-state" style="padding:32px 20px"><div class="empty-icon">✅</div><div class="empty-title">No Active Alerts</div><div class="empty-desc">No duplicate or history alerts at this time. Alerts will appear here when companies with recent assessment history are uploaded.</div></div>`;
+  }else{
+    let html='';
+    const dups=ASSESSMENTS.filter(a=>a.isDuplicate);
+    if(dups.length>0){
+      html+=`<div style="font-family:var(--fm);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px">🚫 Duplicate Blocks (${dups.length})</div>`;
+      dups.forEach(a=>{
+        html+=`<div class="dup-banner" style="margin-bottom:8px">
+          <div class="dup-banner-icon">🚫</div>
+          <div style="flex:1">
+            <div class="dup-banner-title">Duplicate Blocked: ${a.clientName}</div>
+            <div class="dup-banner-detail">₹${a.sumInsured.toFixed(0)}Cr · ${a.assessmentType} · ${a.location}<br>
+            An active assessment already exists. This upload entry was NOT scheduled.</div>
+          </div>
+          <button class="btn btn-ghost btn-xs" onclick="showAssessmentDetail('${a.duplicateOf||a.id}')">View Original</button>
+        </div>`;
+      });
+    }
+    if(active.length>0){
+      html+=`<div style="font-family:var(--fm);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px;margin-top:16px">⚠ 3-Year History Alerts (${active.length})</div>`;
+      active.forEach(ha=>{
+        const prevEng=getEng(ha.histRecord.engId||ha.histRecord.assignedTo);
+        html+=`<div class="history-banner" style="margin-bottom:10px">
+          <div class="history-banner-icon">⚠</div>
+          <div style="flex:1">
+            <div class="history-banner-title">${ha.companyName} — Last assessed ${ha.monthsAgo} months ago (${(ha.monthsAgo/12).toFixed(1)} years)</div>
+            <div class="history-banner-detail">
+              Previous: ${ha.histRecord.assessmentType||'—'} · ₹${ha.histRecord.sumInsured||'—'}Cr · Policy ${ha.histRecord.policyNo||'—'} · ${new Date(ha.histRecord.completedAt).toLocaleDateString('en-IN')}<br>
+              Previous engineer: ${prevEng?prevEng.name:'—'} (${prevEng?.city||'—'})<br>
+              <b style="color:var(--t1)">Current scheduling has proceeded.</b> Review whether re-inspection is appropriate given the ${CFG.historyYears}-year policy window.
+            </div>
+          </div>
+          <button class="alert-close" onclick="dismissAlert('${ha.id}')">✕ Dismiss</button>
+        </div>`;
+      });
+    }
+    listEl.innerHTML=html;
+  }
+
+  // History table
+  const allHistory=[...HISTORY_DB,...ASSESSMENTS.filter(a=>a.status==='done').map(a=>({
+    companyKey:companyKey(a.clientName),
+    companyName:a.clientName,
+    assessmentType:a.assessmentType,
+    sumInsured:a.sumInsured,
+    completedAt:a.completedAt,
+    engId:a.assignedTo,
+    policyNo:a.policyNo,
+    location:a.location
+  }))];
+
+  document.getElementById('history-total-count').textContent=allHistory.length+' records';
+  const cutoff=new Date(Date.now()-CFG.historyYears*365*24*3600000);
+  const tbody=document.getElementById('history-tbody');
+  tbody.innerHTML=allHistory.length?allHistory.sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt)).map(h=>{
+    const ma=monthsAgo(h.completedAt);
+    const isRecent=new Date(h.completedAt)>=cutoff;
+    const eng=getEng(h.engId);
+    return`<tr class="${isRecent?'row-hist':''}">
+      <td class="td-name">${h.companyName}</td>
+      <td>${h.assessmentType==='VRA'?`<span class="assessment-type-pill atp-vra">🖥 VRA</span>`:`<span class="assessment-type-pill atp-pra">🏭 PRA</span>`}</td>
+      <td class="td-amt">₹${(h.sumInsured||0).toFixed(0)}Cr</td>
+      <td class="td-mono" style="font-size:11px">${new Date(h.completedAt).toLocaleDateString('en-IN')}</td>
+      <td style="font-size:12px">${eng?eng.name:(h.engId||'—')}</td>
+      <td class="td-mono">${ma} months</td>
+      <td>${isRecent?`<span class="hist-badge">⚠ Within ${CFG.historyYears}yr</span>`:`<span class="tag gray">Older</span>`}</td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="7"><div style="text-align:center;padding:20px;color:var(--t3)">No history records</div></td></tr>`;
+}
+
+function filterEngCity(city,el){
+  engCityFilter2=city;
+  document.querySelectorAll('#p-engineers .filter-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');renderEngineers();
+}
+
+function renderEngineers(){
+  const cityCount={};CITIES.forEach(c=>{cityCount[c]=0;});
+  ENGINEERS.forEach(e=>{if(cityCount[e.city]!==undefined)cityCount[e.city]++;});
+  const dEl=document.getElementById('city-delhi'),mEl=document.getElementById('city-mumbai'),oEl=document.getElementById('city-others');
+  if(dEl)dEl.textContent=(cityCount['Delhi NCR']||0)+' engs';
+  if(mEl)mEl.textContent=(cityCount['Mumbai']||0)+' engs';
+  if(oEl){const o=ENGINEERS.filter(e=>e.city!=='Delhi NCR'&&e.city!=='Mumbai').length;oEl.textContent=o+' engs';}
+  const engsToShow=engCityFilter2==='all'?ENGINEERS:ENGINEERS.filter(e=>e.city===engCityFilter2);
+  const grid=document.getElementById('eng-grid');if(!grid)return;
+  grid.innerHTML=engsToShow.map(eng=>{
+    const active=eng.tasks.filter(t=>t.status==='assigned').length;
+    const accepted=eng.tasks.filter(t=>t.status==='accepted').length;
+    const done=eng.tasks.filter(t=>t.status==='done').length;
+    const total=eng.tasks.length;
+    const pct=Math.min((active/4)*100,100);
+    const isNext=ENGINEERS.indexOf(eng)===RR;
+    const st=getWorkStatus();
+    const busy=isBusy(eng,new Date().toDateString());
+    const slLabel=busy?'Calendar Busy':st==='working'?'Available':st==='lunch'?'Lunch':'Off hours';
+    const slClass=busy?'gray':st==='working'?'teal':st==='lunch'?'amber':'gray';
+    const calDays=Array.from({length:7},(_,d)=>{
+      const date=new Date();date.setDate(date.getDate()+d);
+      const isToday=d===0;const isBusyDay=eng.busyDates.includes(date.toDateString());
+      const dayNames=['Su','Mo','Tu','We','Th','Fr','Sa'];
+      return`<div class="cal-day${isToday?' today':''}${isBusyDay?' booked':' avail'}">
+        <div class="cal-day-name">${dayNames[date.getDay()]}</div>
+        <div class="cal-day-num">${date.getDate()}</div>
+        <div class="cal-day-dot"></div>
+      </div>`;
+    }).join('');
+    return`<div class="eng-card${isNext?' next-up':''}">
+      <div class="eng-card-head">
+        <div class="eng-avatar" style="background:${eng.color}22;color:${eng.color}">${eng.av}</div>
+        <div style="flex:1;min-width:0">
+          <div class="eng-name">${eng.name}${isNext?` <span class="rr-pill" style="font-size:8.5px;padding:1px 5px;margin-left:3px">Next</span>`:''}</div>
+          <div class="eng-id">${eng.id} · RR #${ENGINEERS.indexOf(eng)+1}</div>
+          <div class="eng-city-badge">📍 ${eng.city}</div>
+        </div>
+        <span class="tag ${slClass}">${slLabel}</span>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-family:var(--fm);font-size:9px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">7-Day Calendar</div>
+        <div class="cal-strip">${calDays}</div>
+      </div>
+      <div class="eng-bar-wrap"><div class="eng-bar-fill" style="width:${pct}%;background:${pct>70?'var(--red)':pct>40?'var(--amber)':'var(--teal)'}"></div></div>
+      <div class="eng-stats">
+        <div><div class="eng-stat-val" style="color:var(--orange)">${active}</div><div class="eng-stat-lbl">Active</div></div>
+        <div><div class="eng-stat-val" style="color:var(--teal)">${accepted}</div><div class="eng-stat-lbl">Accepted</div></div>
+        <div><div class="eng-stat-val" style="color:var(--green)">${done}</div><div class="eng-stat-lbl">Done</div></div>
+        <div><div class="eng-stat-val" style="color:var(--t2)">${total}</div><div class="eng-stat-lbl">Total</div></div>
+      </div>
+      <div class="eng-footer">
+        <span class="eng-email">${eng.email}@company.com</span>
+        <button class="btn btn-ghost btn-xs" onclick="showEngDetail('${eng.id}')">Detail</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+//  ENGINEER PORTAL
+// ════════════════════════════════════════
+function epTabSwitch(tab,el){
+  epTab=tab;
+  document.querySelectorAll('.ep-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  ['pending','accepted','done','history'].forEach(t=>{
+    const v=document.getElementById('ep-'+t+'-view');
+    if(v)v.classList.toggle('hidden',t!==tab);
+  });
+  renderEngPortal();
+}
+
+function renderEngPortal(){
+  if(!currentUser||currentUser.role!=='engineer')return;
+  const engId=currentUser.engId;
+  const pending=ASSESSMENTS.filter(a=>a.assignedTo===engId&&a.status==='assigned');
+  const accepted=ASSESSMENTS.filter(a=>a.assignedTo===engId&&a.status==='accepted');
+  const done=ASSESSMENTS.filter(a=>a.assignedTo===engId&&a.status==='done');
+  const mine=ASSESSMENTS.filter(a=>a.tried?.includes(engId));
+  const history=mine.filter(a=>a.status!=='assigned');
+
+  document.getElementById('eps-pending').textContent=pending.length;
+  document.getElementById('eps-accepted').textContent=accepted.length;
+  document.getElementById('eps-total').textContent=mine.length;
+  document.getElementById('ep-greeting-sub').textContent=pending.length>0?`You have ${pending.length} assessment${pending.length>1?'s':''} awaiting your response.`:'All caught up! No pending assessments right now.';
+
+  const pv=document.getElementById('ep-pending-view');
+  const av=document.getElementById('ep-accepted-view');
+  const dv=document.getElementById('ep-done-view');
+  const hv=document.getElementById('ep-history-view');
+
+  if(pv)pv.innerHTML=pending.length?pending.map(a=>renderTaskCard(a,'pending')).join(''):emptyHTML('No Pending Assessments','New assignments will appear here when allocated to you.','✅');
+  if(av)av.innerHTML=accepted.length?accepted.map(a=>renderTaskCard(a,'accepted')).join(''):emptyHTML('No Accepted Assessments','Assessments you accept will appear here.','📋');
+  if(dv)dv.innerHTML=accepted.length?accepted.map(a=>renderTaskCard(a,'done-action')).join(''):emptyHTML('Accept assessments first, then mark done after inspection.','','🏁');
+  if(hv)hv.innerHTML=history.length?history.map(a=>renderTaskCard(a,'history')).join(''):emptyHTML('No History','Past assessments will appear here.','🗂');
+}
+
+function renderTaskCard(a,view){
+  const isVRA=a.assessmentType==='VRA';
+  const isPRA=a.assessmentType==='PRA';
+  const riskIcon=RISK_ICONS[a.riskType]||'📄';
+  const now=new Date();
+  const deadline=a.deadline?new Date(a.deadline):null;
+  const msLeft=deadline?deadline-now:0;
+  const hrsLeft=Math.max(0,msLeft/3600000);
+  const pct=deadline?Math.max(0,Math.min(100,(msLeft/(CFG.deadlineHrs*3600000))*100)):0;
+  const urgent=hrsLeft<2&&hrsLeft>0&&a.status==='assigned';
+  const barColor=pct>50?'var(--teal)':pct>20?'var(--amber)':'var(--red)';
+  const statusClass=a.status==='accepted'?'status-accepted':a.status==='done'?'status-accepted':(a.status==='declined'||a.status==='escalated')?'status-declined':'';
+
+  let typeNote='';
+  if(isVRA)typeNote=`<div class="vra-note"><span>🖥</span><div><b>Virtual Assessment</b> — Conduct remotely from your ${currentUser.eng.city} office. No travel required.</div></div>`;
+  if(isPRA)typeNote=`<div class="pra-note"><span>🏭</span><div><b>Physical Assessment Required</b> — On-site at <b>${a.location}</b>. ${a.cityMatch?`<span style="color:var(--green)">✓ Matches your ${currentUser.eng.city} office.</span>`:`<span style="color:var(--amber)">⚠ Travel from ${currentUser.eng.city} needed.</span>`}</div></div>`;
+
+  let actions='';
+  if(view==='pending'&&a.status==='assigned'){
+    actions=`<div class="task-buttons">
+      <button class="btn-accept" onclick="engRespond('${a.id}','accepted')">✓ Accept</button>
+      <button class="btn-decline" onclick="engRespond('${a.id}','declined')">✗ Decline</button>
+    </div>`;
+  }else if(view==='done-action'&&a.status==='accepted'){
+    actions=`<div class="task-buttons"><button class="btn-accept" style="background:var(--green)" onclick="markDone('${a.id}')">✔ Mark Inspection Done</button></div>`;
+  }else if(a.status==='accepted'||a.status==='done'){
+    actions=`<div class="task-resolved-pill acc">${a.status==='done'?'✔ Inspection Completed':'✓ Accepted — awaiting inspection'}</div>`;
+  }else if(a.status==='declined'||a.status==='escalated'){
+    actions=`<div class="task-resolved-pill dec">${a.status==='escalated'?'⚠ Escalated':'✗ Declined'}</div>`;
+  }
+
+  return`<div class="task-card ${statusClass}">
+    ${deadline&&a.status==='assigned'?`<div class="task-timer-bar"><div class="task-timer-fill" style="width:${pct}%;background:${barColor}"></div></div>`:''}
+    <div class="task-body">
+      <div class="task-type-icon ${isVRA?'vra-type':'pra-type'}">${riskIcon}</div>
+      <div class="task-info">
+        <div class="task-client-name">${a.clientName}</div>
+        <div class="task-policy">${a.policyNo} · Attempt #${a.attempt}</div>
+        <div class="task-amount">₹${a.sumInsured.toFixed(2)} Crore</div>
+        <div class="task-meta">
+          <div class="task-meta-item"><span class="task-meta-icon">📍</span>${a.location}</div>
+          <div class="task-meta-item"><span class="task-meta-icon">🏷</span>${a.riskType}</div>
+          <div class="task-meta-item"><span class="task-meta-icon">📅</span>${new Date(a.createdAt).toLocaleDateString('en-IN')}</div>
+        </div>
+        <div class="task-type-badge">
+          ${isVRA?`<span class="assessment-type-pill atp-vra">🖥 Virtual Risk Assessment</span>`:`<span class="assessment-type-pill atp-pra">🏭 Physical Risk Assessment</span>`}
+          ${statusTag(a.status)}
+          ${a.historyFlag?`<span class="hist-badge">⚠ History: ${a.historyFlag.monthsAgo}mo</span>`:''}
+        </div>
+        ${typeNote}
+      </div>
+    </div>
+    <div class="task-action-bar">
+      <div class="task-deadline ${urgent?'urgent':''}">
+        ${deadline&&a.status==='assigned'?`⏱ ${urgent?'URGENT · ':''}${hrsLeft.toFixed(1)} hrs remaining`:''}
+        ${a.status==='done'?`<span style="color:var(--green)">✔ Done ${a.completedAt?new Date(a.completedAt).toLocaleDateString('en-IN'):''}`:'' }
+        ${a.status==='accepted'&&view!=='done-action'?`<span style="color:var(--teal)">✓ Accepted — awaiting inspection</span>`:''}
+      </div>
+      ${actions}
+    </div>
+  </div>`;
+}
+
+function engRespond(asmtId,action){processResponse(asmtId,action);renderEngPortal();}
+function emptyHTML(title,desc,ic){
+  return`<div class="empty-state"><div class="empty-icon">${ic}</div><div class="empty-title">${title}</div><div class="empty-desc">${desc}</div></div>`;
+}
+
+
+//  MODALS
+
+function showAssessmentDetail(id){
+  const a=ASSESSMENTS.find(x=>x.id===id);if(!a)return;
+  const eng=getEng(a.assignedTo);
+  const logs=ALLOC_LOG.filter(l=>l.asmtId===id);
+  document.getElementById('modal-title-text').textContent=a.clientName;
+  let histHtml='';
+  if(a.isDuplicate){
+    histHtml=`<div class="dup-banner" style="margin-bottom:14px">
+      <div class="dup-banner-icon">🚫</div>
+      <div><div class="dup-banner-title">Duplicate — Not Scheduled</div><div class="dup-banner-detail">An active assessment for this company already exists. This entry was blocked from allocation.</div></div>
+    </div>`;
+  }
+  if(a.historyFlag){
+    histHtml+=`<div class="history-banner" style="margin-bottom:14px">
+      <div class="history-banner-icon">⚠</div>
+      <div><div class="history-banner-title">3-Year History Flag</div><div class="history-banner-detail">Last assessment was <b>${a.historyFlag.monthsAgo} months ago</b> (${a.historyFlag.years} years). Policy: ${a.historyFlag.policyNo}. Admin has been notified.</div></div>
+    </div>`;
+  }
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      ${a.assessmentType==='VRA'?`<span class="assessment-type-pill atp-vra">🖥 Virtual Risk Assessment</span>`:`<span class="assessment-type-pill atp-pra">🏭 Physical Risk Assessment</span>`}
+      ${statusTag(a.status)}
+      ${a.historyFlag?`<span class="hist-badge">⚠ History Flag</span>`:''}
+      ${a.isDuplicate?`<span class="dup-badge">🚫 Duplicate</span>`:''}
+    </div>
+    ${histHtml}
+    <div class="detail-grid">
+      <div class="detail-cell"><div class="detail-label">Sum Insured</div><div style="font-family:var(--fh);font-size:24px;font-weight:700;color:var(--orange)">₹${a.sumInsured.toFixed(2)} Cr</div></div>
+      <div class="detail-cell"><div class="detail-label">Assessment Type</div><div class="detail-value">${a.assessmentType==='VRA'?'Virtual (5–100 Cr)':a.assessmentType==='PRA'?'Physical (>100 Cr)':'—'}</div></div>
+      <div class="detail-cell"><div class="detail-label">Policy No</div><div class="detail-value" style="font-family:var(--fm);font-size:12px">${a.policyNo}</div></div>
+      <div class="detail-cell"><div class="detail-label">Risk Category</div><div class="detail-value">${a.riskType}</div></div>
+      <div class="detail-cell"><div class="detail-label">Risk Location</div><div class="detail-value">📍 ${a.location}</div></div>
+      <div class="detail-cell"><div class="detail-label">Assigned Engineer</div><div class="detail-value" style="display:flex;align-items:center;gap:6px">${eng?`<span style="width:8px;height:8px;border-radius:50%;background:${eng.color};flex-shrink:0"></span>${eng.name}`:'-'}</div></div>
+      ${a.assessmentType==='PRA'?`<div class="detail-cell"><div class="detail-label">City Match</div><div class="detail-value">${a.cityMatch===true?'<span style="color:var(--teal)">✓ Matched</span>':a.cityMatch===false?'<span style="color:var(--amber)">⚠ Fallback</span>':'—'}</div></div>`:''}
+      <div class="detail-cell"><div class="detail-label">Created At</div><div class="detail-value" style="font-size:12px">${new Date(a.createdAt).toLocaleString('en-IN')}</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">Allocation History (${logs.length} attempt${logs.length!==1?'s':''})</div>
+    ${logs.length?logs.map(l=>`<div class="attempt-row">
+      <div class="attempt-num">${l.attempt}</div>
+      <div style="flex:1"><div style="font-weight:500;font-size:12.5px">${l.engName}</div><div style="font-size:10.5px;color:var(--t3)">${l.engCity} · ${new Date(l.time).toLocaleString('en-IN')}</div></div>
+      <div style="display:flex;gap:5px">${statusTag(l.action)} ${statusTag(l.response)}</div>
+    </div>`).join(''):'<div style="color:var(--t3);font-size:12px;padding:8px 0">No attempts recorded</div>'}
+    <div class="divider"></div>
+    <div class="section-label">Assessment ID</div>
+    <div style="font-family:var(--fm);font-size:10px;color:var(--t3)">${a.id}</div>`;
+  openModal();
+}
+
+function showEngDetail(id){
+  const eng=ENGINEERS.find(e=>e.id===id);if(!eng)return;
+  const mine=ASSESSMENTS.filter(a=>a.assignedTo===id||a.tried?.includes(id));
+  const busyDaysUpcoming=eng.busyDates.filter(d=>new Date(d)>=new Date());
+  document.getElementById('modal-title-text').textContent=eng.name;
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)">
+      <div class="eng-avatar" style="width:48px;height:48px;border-radius:13px;font-size:15px;background:${eng.color}22;color:${eng.color}">${eng.av}</div>
+      <div>
+        <div style="font-size:15px;font-weight:600">${eng.name}</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--t3);margin-top:3px">${eng.id} · RR #${ENGINEERS.indexOf(eng)+1}</div>
+        <div style="display:flex;gap:6px;margin-top:5px"><span class="tag orange">📍 ${eng.city}</span><span class="tag ${isBusy(eng)?'amber':'teal'}">${isBusy(eng)?'Busy Today':'Available Today'}</span></div>
+      </div>
+    </div>
+    <div class="section-label">Specialities</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px">${eng.speciality.map(s=>`<span class="tag gray">${s}</span>`).join('')}</div>
+    <div class="section-label">Contact</div>
+    <div style="font-family:var(--fm);font-size:11px;color:var(--t2);margin-bottom:14px">${eng.email}@company.com</div>
+    <div class="section-label">Upcoming Busy Days (${busyDaysUpcoming.length})</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px">${busyDaysUpcoming.slice(0,8).map(d=>`<span class="tag amber">${new Date(d).toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})}</span>`).join('')||'<span style="color:var(--t3);font-size:12px">No upcoming busy days</span>'}</div>
+    <div class="section-label">Assigned Assessments (${mine.length})</div>
+    ${mine.length?mine.map(a=>`<div class="attempt-row">
+      <div style="flex:1"><div style="font-weight:500;font-size:12px">${a.clientName}</div><div style="font-size:10.5px;color:var(--t3)">₹${a.sumInsured.toFixed(0)}Cr · ${a.riskType} · ${a.assessmentType}</div></div>
+      ${statusTag(a.status)}
+    </div>`).join(''):'<div style="color:var(--t3);font-size:12px;padding:8px 0">No assessments</div>'}`;
+  openModal();
+}
+
+function openModal(){document.getElementById('main-modal').classList.add('on');}
+function closeModal(){document.getElementById('main-modal').classList.remove('on');}
+document.getElementById('main-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+
+//  CONFIG
+
+function saveConfig(){
+  CFG.workStart=document.getElementById('cfg-ws').value;
+  CFG.workEnd=document.getElementById('cfg-we').value;
+  CFG.lunchStart=document.getElementById('cfg-ls').value;
+  CFG.lunchEnd=document.getElementById('cfg-le').value;
+  CFG.deadlineHrs=parseInt(document.getElementById('cfg-dl').value)||8;
+  CFG.maxAttempts=parseInt(document.getElementById('cfg-ma').value)||3;
+  CFG.vraMin=parseFloat(document.getElementById('cfg-vra-min').value)||5;
+  CFG.vraMax=parseFloat(document.getElementById('cfg-vra-max').value)||100;
+  CFG.historyYears=parseInt(document.getElementById('cfg-hist-years').value)||3;
+  addAudit('⚙','Config saved',`VRA: ₹${CFG.vraMin}–${CFG.vraMax}Cr · Deadline: ${CFG.deadlineHrs}h · History: ${CFG.historyYears}yr`);
+  toast('Configuration saved','ok');
+}
+
+function clearAudit(){
+  AUDIT_LOG.length=0;
+  const tl=document.getElementById('audit-timeline');
+  if(tl)tl.innerHTML='<div class="empty-state" style="padding:20px"><div class="empty-title">Log cleared</div></div>';
+  toast('Audit log cleared','info');
+}
+
+function exportCSV(){
+  if(!ASSESSMENTS.length){toast('Nothing to export','err');return;}
+  const rows=[['ID','Client','Policy No','Sum Insured (Cr)','Assessment Type','Risk Category','Location','Assigned Engineer','Engineer City','City Match','Status','History Flag','Months Since Last','Attempts']];
+  ASSESSMENTS.forEach(a=>{
+    const eng=getEng(a.assignedTo);
+    rows.push([a.id,a.clientName,a.policyNo,a.sumInsured,a.assessmentType||'—',a.riskType,a.location,eng?.name||'',eng?.city||'',a.cityMatch===true?'Yes':a.cityMatch===false?'No (Fallback)':'—',a.status,a.historyFlag?'Yes':'No',a.historyFlag?.monthsAgo||'',a.attempt||0]);
+  });
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n')],{type:'text/csv'}));
+  link.download='riskflow_'+Date.now()+'.csv';link.click();
+  toast('CSV exported','ok');
+}
+
+//  DEMO SEED
+
+function seedDemoData(){
+  const samples=[
+    {clientName:'Reliance Industries Ltd',  policyNo:'POL-2024-001',sumInsured:850,  riskType:'Petrochemical',        location:'Mumbai',    assessmentType:'PRA'},
+    {clientName:'Tata Steel Limited',        policyNo:'POL-2024-002',sumInsured:320,  riskType:'Manufacturing',         location:'Mumbai',    assessmentType:'PRA'},
+    {clientName:'Infosys Campus Pune',       policyNo:'POL-2024-003',sumInsured:45,   riskType:'IT Park',               location:'Pune',      assessmentType:'VRA'},
+    {clientName:'Mahindra & Mahindra',       policyNo:'POL-2024-004',sumInsured:180,  riskType:'Industrial All Risk',   location:'Pune',      assessmentType:'PRA'},
+    {clientName:'SBI Mumbai HQ',             policyNo:'POL-2024-005',sumInsured:75,   riskType:'Financial Institution', location:'Mumbai',    assessmentType:'VRA'},
+    {clientName:'NTPC Dadri Power',          policyNo:'POL-2024-006',sumInsured:1200, riskType:'Power Plant',           location:'Delhi NCR', assessmentType:'PRA'},
+    {clientName:'Cipla Pharma Nashik',       policyNo:'POL-2024-007',sumInsured:65,   riskType:'Pharma',                location:'Nashik',    assessmentType:'VRA'},
+    {clientName:'Kirloskar Electric',        policyNo:'POL-2024-008',sumInsured:28,   riskType:'Manufacturing',         location:'Pune',      assessmentType:'VRA'},
+    {clientName:'Hyderabad IT SEZ',          policyNo:'POL-2024-009',sumInsured:92,   riskType:'IT Park',               location:'Hyderabad', assessmentType:'VRA'},
+    {clientName:'Coal India Mining',         policyNo:'POL-2024-010',sumInsured:540,  riskType:'Mining',                location:'Hyderabad', assessmentType:'PRA'},
+    {clientName:'Welspun Textiles',          policyNo:'POL-2024-011',sumInsured:38,   riskType:'Textile',               location:'Ahmedabad', assessmentType:'VRA'},
+    {clientName:'Adani Power Gujarat',       policyNo:'POL-2024-012',sumInsured:760,  riskType:'Power Plant',           location:'Ahmedabad', assessmentType:'PRA'},
+    {clientName:'Godrej Properties',         policyNo:'POL-2024-013',sumInsured:15,   riskType:'Property',              location:'Mumbai',    assessmentType:'VRA'},
+    {clientName:'Amazon Fulfillment Delhi',  policyNo:'POL-2024-014',sumInsured:55,   riskType:'Industrial All Risk',   location:'Delhi NCR', assessmentType:'VRA'},
+    {clientName:'Small Retail Shop',         policyNo:'POL-2024-015',sumInsured:2.5,  riskType:'Property',              location:'Aurangabad',assessmentType:'skipped'},
+    // These will trigger history / dup flags:
+    {clientName:'Reliance Industries Ltd',   policyNo:'POL-2024-016',sumInsured:900,  riskType:'Petrochemical',         location:'Mumbai',    assessmentType:'PRA'}, // will be dup
+    {clientName:'NTPC Dadri Power',          policyNo:'POL-2024-017',sumInsured:1300, riskType:'Power Plant',           location:'Delhi NCR', assessmentType:'PRA'}, // 3yr history hit
+    {clientName:'Coal India Mining',         policyNo:'POL-2024-018',sumInsured:600,  riskType:'Mining',                location:'Hyderabad', assessmentType:'PRA'}, // 3yr history hit
+  ];
+
+  const now=new Date();
+  samples.forEach((s,i)=>{
+    if(s.assessmentType==='skipped'){
+      const a=makeAssessment(s,'skipped');
+      ASSESSMENTS.push(a);return;
+    }
+    // ── Dup check ──
+    const dupExisting=checkDuplicate(s);
+    if(dupExisting){
+      const a=makeAssessment(s,'duplicate');
+      a.isDuplicate=true;a.duplicateOf=dupExisting.id;
+      ASSESSMENTS.push(a);
+      addAudit('🚫','BLOCKED (Duplicate): '+s.clientName,'Already scheduled','red');
+      return;
+    }
+    // ── History check ──
+    const histRecord=check3YearHistory(s);
+    const a=makeAssessment(s,'assigned');
+    if(histRecord){
+      const ma=monthsAgo(histRecord.completedAt||histRecord.createdAt);
+      a.historyFlag={completedAt:histRecord.completedAt,engId:histRecord.engId,monthsAgo:ma,years:(ma/12).toFixed(1),policyNo:histRecord.policyNo||'—'};
+      HISTORY_ALERTS.push({id:'HA-DEMO-'+i,companyName:s.clientName,assessmentType:s.assessmentType,sumInsured:s.sumInsured,histRecord,monthsAgo:ma,dismissed:false,asmtId:a.id});
+      addAudit('⚠','History Alert: '+s.clientName,`Last assessed ${ma} months ago`,'amber');
+    }
+    const result=nextEligibleEng(a,[]);
+    if(result){
+      const{eng,cityMatch}=result;
+      a.assignedTo=eng.id;a.attempt=1;a.tried=[eng.id];
+      a.deadline=new Date(now.getTime()+(CFG.deadlineHrs*3600000)-(i*600000)).toISOString();
+      a.cityMatch=cityMatch;
+      eng.tasks.push({asmtId:a.id,status:'assigned'});
+      addAllocLog(a,eng,1,'assigned');
+    }
+    ASSESSMENTS.push(a);
+  });
+
+  setTimeout(()=>{
+    processResponse(ASSESSMENTS[0]?.id,'accepted');
+    processResponse(ASSESSMENTS[2]?.id,'accepted');
+    processResponse(ASSESSMENTS[4]?.id,'declined');
+    processResponse(ASSESSMENTS[6]?.id,'accepted');
+    if(ASSESSMENTS[2])markDone(ASSESSMENTS[2].id);
+  },150);
+}
+
+//  INIT
+
+addAudit('🚀','RiskFlow Pro v3.0 initialized','Orange theme · Dark/Light mode · History engine active');
+seedDemoData();
+updateAlertsIndicator();
+</script>
+</body>
+</html>
